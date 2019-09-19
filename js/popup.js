@@ -101,7 +101,7 @@ app({
             ...Object.keys(versions || {}).map(arch =>
               h(
                 'option',
-                { selected: arch === state.arch ? true : undefined },
+                { selected: arch === state.arch },
                 arch
               )
             )
@@ -140,7 +140,7 @@ app({
               ? versions[state.arch].map(item =>
                   h(
                     'option',
-                    { selected: item.tag === state.tag ? true : undefined },
+                    { selected: item.tag === state.tag },
                     item.tag
                   )
                 )
