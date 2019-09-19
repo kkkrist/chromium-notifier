@@ -2,7 +2,7 @@
 
 This extension will periodically check [Woolyss' website](https://chromium.woolyss.com/) and display a "New" icon badge once the version found for the selected platform/tag is different to the one you're currently using. Nothing more, nothing less.
 
-<img height="293" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/static/docs/screenshot.webp" width="272" />
+<img height="293" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/docs/screenshot.webp" width="272" />
 
 ## Installation
 
