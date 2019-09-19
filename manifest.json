@@ -24,5 +24,5 @@
   "description": "Checks for new versions of Chromium Update Notifications based on Woolyss' Website",
   "manifest_version": 2,
   "name": "Chromium Update Notifications",
-  "version": "1.0"
+  "version": "1.0.0"
 }
