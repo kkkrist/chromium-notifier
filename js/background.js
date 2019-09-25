@@ -1,3 +1,7 @@
+const currentVersion = window.navigator.userAgent.match(
+  /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+)[1]
+
 const getMetaInfo = (div, arch, tag) => {
   const id = `#${arch}-${tag}`
   let textContent = div.querySelector(id).querySelector('details summary')
@@ -53,32 +57,59 @@ const getWrapper = () =>
 
 const handleError = e => {
   console.error(e)
-  localStorage.setItem('error', e.message)
-  chrome.browserAction.setBadgeBackgroundColor({ color: [180, 0, 20, 255] });
+  localStorage.error = e.message
+  chrome.browserAction.setBadgeBackgroundColor({ color: [180, 0, 20, 255] })
   chrome.browserAction.setBadgeText({ text: 'Error!' })
 }
 
 const main = () => {
-  const arch = localStorage.getItem('arch')
-  const tag = localStorage.getItem('tag')
-  const timestamp = Number(localStorage.getItem('timestamp'))
-  const versions = JSON.parse(localStorage.getItem('versions'))
+  const arch = localStorage.arch
+  const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
+  const extensionsTrack = localStorage.extensionsTrack === 'true'
+  const tag = localStorage.tag
+  const timestamp = Number(localStorage.timestamp)
+  const versions = JSON.parse(localStorage.versions || null)
+
   const current = versions && arch && versions[arch].find(v => v.tag === tag)
 
-  if (!versions || timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()) {
-    getWrapper().then(div => {
-      const newVersions = getVersions(div)
-      const currentVersion = window.navigator.userAgent.match(
-        /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-      )[1]
+  if (
+    !extensionsInfo ||
+    !versions ||
+    timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
+  ) {
+    const p = [getWrapper()]
 
-      localStorage.removeItem('error')
-      localStorage.setItem('timestamp', new Date().getTime())
-      localStorage.setItem('versions', JSON.stringify(newVersions))
+    if (extensionsTrack) {
+      p.push(
+        new Promise(resolve =>
+          chrome.management.getAll(exts =>
+            resolve(
+              exts.map(ext => ({
+                id: ext.id,
+                updateUrl: ext.updateUrl
+              }))
+            )
+          )
+        ).then(extensions =>
+          fetch('https://chrome-extension-service.kkkrist.now.sh/api', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prodversion: currentVersion, extensions })
+          }).then(res => res.json())
+        )
+      )
+    }
 
+    Promise.all(p).then(([div, extensionsInfo]) => {
+      delete localStorage.error
+      localStorage.extensionsInfo = JSON.stringify(extensionsInfo)
+      localStorage.timestamp = new Date().getTime()
+      localStorage.versions = JSON.stringify(getVersions(div))
 
       if (current && currentVersion !== current.version) {
-        chrome.browserAction.setBadgeBackgroundColor({ color: [0, 150, 180, 255] })
+        chrome.browserAction.setBadgeBackgroundColor({
+          color: [0, 150, 180, 255]
+        })
         chrome.browserAction.setBadgeText({ text: 'New' })
       }
     }, handleError)
