@@ -40,6 +40,8 @@ const ChromiumInfo = ({ current }) =>
           },
           [
             h('li', {}, [
+              current &&
+                h('span', {}, current.version === currentVersion ? '✅' : '🚨'),
               h('span', {}, 'Current: '),
               h('a', { href: current.link, target: '_blank' }, current.version)
             ]),
@@ -122,15 +124,11 @@ app({
 
       Row([
         h('details', { open: state.current.version !== currentVersion }, [
-          h('summary', { style: { cursor: 'pointer' } }, [
-            h('span', {}, `Chromium: ${currentVersion} `),
-            state.current &&
-              h(
-                'span',
-                {},
-                state.current.version === currentVersion ? '✅' : '🚨'
-              )
-          ]),
+          h(
+            'summary',
+            { style: { cursor: 'pointer' } },
+            `Chromium ${currentVersion} `
+          ),
 
           ChromiumInfo(state),
 
