@@ -22,13 +22,23 @@ const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 const error = localStorage.error
+const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
+const extensionsNew = localStorage.extensionsNew === 'true'
 const extensionsTrack =
   localStorage.extensionsTrack === undefined
     ? true
     : localStorage.extensionsTrack === 'true'
 const tag = localStorage.tag
 const timestamp = Number(localStorage.timestamp)
-const versions = JSON.parse(localStorage.versions)
+const versions = JSON.parse(localStorage.versions || null)
+
+const initialState = {
+  arch,
+  current: versions[arch].find(v => v.tag === tag),
+  extensionsNew,
+  extensionsTrack,
+  tag
+}
 
 const ChromiumInfo = ({ current }) =>
   current
@@ -58,21 +68,45 @@ const ChromiumInfo = ({ current }) =>
       ]
     : []
 
-const ExtensionsInfo = ({ currentExts, extensions }) => [
+const ExtensionsInfo = ({ extensions }) => [
   h(
     'ul',
     {
       style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
     },
-    extensions.map(ext =>
-      h('li', {}, [
-        h('span', {}, `✅ `),
+    extensions.map(ext => {
+      const info = extensionsInfo.find(({ id }) => id === ext.id)
+      return h('li', {}, [
+        h(
+          'span',
+          {},
+          `${!info ? '❓' : info.version !== ext.version ? '🚨' : '✅'} `
+        ),
         ext.homepageUrl
           ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
           : h('span', {}, ext.name),
-        h('code', {}, ` v${ext.version}`)
+        h('code', {}, [
+          h('span', {}, ` v${ext.version} `),
+          info &&
+            info.version !== ext.version &&
+            h(
+              'a',
+              {
+                href: info.codebase.endsWith('crx')
+                  ? `${
+                      info.updateUrl
+                    }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
+                      info.id
+                    }%26installsource%3Dondemand%26uc`
+                  : info.codebase,
+                style: { color: 'red' },
+                target: '_blank'
+              },
+              `(v${info.version})`
+            )
+        ])
       ])
-    )
+    })
   )
 ]
 
@@ -85,24 +119,17 @@ const Row = children =>
     children
   )
 
-const initial = {
-  arch,
-  current: versions[arch].find(v => v.tag === tag),
-  extensionsTrack,
-  tag
-}
-
 app({
   init: [
-    initial,
+    initialState,
     [
       dispatch =>
-        chrome.management.getAll(extensions =>
+        chrome.management.getAll(extensions => {
           dispatch({
-            ...initial,
+            ...initialState,
             extensions
           })
-        )
+        })
     ]
   ],
   view: state =>
@@ -153,13 +180,7 @@ app({
         Row([
           h('details', { open: state.extensionsNew }, [
             h('summary', { style: { cursor: 'pointer' } }, [
-              h('span', {}, `${state.extensions.length} Extensions`),
-              state.currentExts &&
-                h(
-                  'span',
-                  {},
-                  state.currentExts.version === currentExts ? '✅' : '🚨'
-                )
+              h('span', {}, `${state.extensions.length} Extensions`)
             ]),
             h('table', {}, ExtensionsInfo(state))
           ])
