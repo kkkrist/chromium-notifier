@@ -22,10 +22,10 @@ const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 const error = localStorage.error
-const trackExtensions =
-  localStorage.trackExtensions === undefined
+const extensionsTrack =
+  localStorage.extensionsTrack === undefined
     ? true
-    : localStorage.trackExtensions === 'true'
+    : localStorage.extensionsTrack === 'true'
 const tag = localStorage.tag
 const timestamp = Number(localStorage.timestamp)
 const versions = JSON.parse(localStorage.versions)
@@ -56,6 +56,24 @@ const ChromiumInfo = ({ current }) =>
       ]
     : []
 
+const ExtensionsInfo = ({ currentExts, extensions }) => [
+  h(
+    'ul',
+    {
+      style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
+    },
+    extensions.map(ext =>
+      h('li', {}, [
+        h('span', {}, `✅ `),
+        ext.homepageUrl
+          ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
+          : h('span', {}, ext.name),
+        h('code', {}, ` v${ext.version}`)
+      ])
+    )
+  )
+]
+
 const Row = children =>
   h(
     'div',
@@ -65,13 +83,26 @@ const Row = children =>
     children
   )
 
+const initial = {
+  arch,
+  current: versions[arch].find(v => v.tag === tag),
+  extensionsTrack,
+  tag
+}
+
 app({
-  init: {
-    arch,
-    current: versions[arch].find(v => v.tag === tag),
-    trackExtensions,
-    tag
-  },
+  init: [
+    initial,
+    [
+      dispatch =>
+        chrome.management.getAll(extensions =>
+          dispatch({
+            ...initial,
+            extensions
+          })
+        )
+    ]
+  ],
   view: state =>
     h('div', {}, [
       Row([
@@ -104,7 +135,7 @@ app({
           ChromiumInfo(state),
 
           h('div', { style: { fontSize: 'smaller', marginTop: '1em' } }, [
-            h('span', {}, 'Tracking: '),
+            h('span', {}, 'Tracking '),
             h(
               'a',
               {
@@ -119,18 +150,20 @@ app({
         ])
       ]),
 
-      state.trackExtensions &&
+      state.extensionsTrack &&
+        state.extensions &&
         Row([
-          h('details', { open: state.current.version !== currentVersion }, [
+          h('details', { open: state.extensionsNew }, [
             h('summary', { style: { cursor: 'pointer' } }, [
-              //h('span', {}, `${extensions.length} Extensions found`),
-              //state.currentExts &&
-                //h(
-                  //'span',
-                  //{},
-                  //state.currentExts.version === currentExts ? '✅' : '🚨'
-                //)
-            ])
+              h('span', {}, `${state.extensions.length} Extensions`),
+              state.currentExts &&
+                h(
+                  'span',
+                  {},
+                  state.currentExts.version === currentExts ? '✅' : '🚨'
+                )
+            ]),
+            h('table', {}, ExtensionsInfo(state))
           ])
         ]),
 
@@ -218,24 +251,20 @@ app({
             ]),
 
             h('label', {}, [
-              h('p', { style: { margin: '0.25rem 0 0' } }, 'Track Extensions'),
-              h('input', {
-                checked: state.trackExtensions,
-                onClick: (state, e) => {
-                  localStorage.trackExtensions = e.target.checked
-                  return {
-                    ...state,
-                    trackExtensions: e.target.checked
-                  }
-                },
-                style: {
-                  display: 'block',
-                  height: '2em',
-                  margin: 0,
-                  width: '2em'
-                },
-                type: 'checkbox'
-              })
+              h('p', { style: { margin: '1rem 0 0' } }, [
+                h('span', {}, 'Track Extensions '),
+                h('input', {
+                  checked: state.extensionsTrack,
+                  onClick: (state, e) => {
+                    localStorage.extensionsTrack = e.target.checked
+                    return {
+                      ...state,
+                      extensionsTrack: e.target.checked
+                    }
+                  },
+                  type: 'checkbox'
+                })
+              ])
             ])
           ])
         ])
