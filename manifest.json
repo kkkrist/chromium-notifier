@@ -22,7 +22,7 @@
     "48": "img/icon48.png",
     "128": "img/icon128.png"
   },
-  "homepageUrl": "https://github.com/kkkrist/chromium-notifier",
+  "homepage_url": "https://github.com/kkkrist/chromium-notifier",
   "manifest_version": 2,
   "name": "Chromium Update Notifications",
   "permissions": ["management"],
