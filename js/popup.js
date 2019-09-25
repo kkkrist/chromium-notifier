@@ -17,14 +17,15 @@ const selectStyle = {
   width: '100%'
 }
 
-const arch = localStorage.getItem('arch')
+const arch = localStorage.arch
 const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
-const error = localStorage.getItem('error')
-const tag = localStorage.getItem('tag')
-const timestamp = Number(localStorage.getItem('timestamp'))
-const versions = JSON.parse(localStorage.getItem('versions'))
+const error = localStorage.error
+const extensions = localStorage.extensions || 'true'
+const tag = localStorage.tag
+const timestamp = Number(localStorage.timestamp)
+const versions = JSON.parse(localStorage.versions)
 
 const ChromiumInfo = ({ current }) =>
   current
@@ -62,7 +63,12 @@ const Row = children =>
   )
 
 app({
-  init: { arch, current: versions[arch].find(v => v.tag === tag), tag },
+  init: {
+    arch,
+    current: versions[arch].find(v => v.tag === tag),
+    extensions,
+    tag
+  },
   view: state =>
     h('div', {}, [
       Row([
@@ -121,8 +127,8 @@ app({
                 {
                   disabled: !versions,
                   onChange: (state, e) => {
-                    localStorage.setItem('arch', e.target.value)
-                    localStorage.removeItem('tag')
+                    localStorage.arch = e.target.value
+                    delete localStorage.tag
                     chrome.browserAction.setBadgeText({ text: '' })
                     return {
                       ...state,
@@ -153,7 +159,7 @@ app({
                 {
                   disabled: !state.arch,
                   onChange: (state, e) => {
-                    localStorage.setItem('tag', e.target.value)
+                    localStorage.tag = e.target.value
                     const current =
                       state.arch &&
                       versions[state.arch].find(
@@ -191,6 +197,27 @@ app({
                     : [])
                 ]
               )
+            ]),
+
+            h('label', {}, [
+              h('p', { style: { margin: '0.25rem 0 0' } }, 'Track Extensions'),
+              h('input', {
+                checked: state.extensions === 'true',
+                onClick: (state, e) => {
+                  localStorage.extensions = e.target.checked
+                  return {
+                    ...state,
+                    extensions: `${e.target.checked}`
+                  }
+                },
+                style: {
+                  display: 'block',
+                  height: '2em',
+                  margin: 0,
+                  width: '2em'
+                },
+                type: 'checkbox'
+              })
             ])
           ])
         ])
