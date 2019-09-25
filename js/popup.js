@@ -22,7 +22,10 @@ const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 const error = localStorage.error
-const extensions = localStorage.extensions || 'true'
+const trackExtensions =
+  localStorage.trackExtensions === undefined
+    ? true
+    : localStorage.trackExtensions === 'true'
 const tag = localStorage.tag
 const timestamp = Number(localStorage.timestamp)
 const versions = JSON.parse(localStorage.versions)
@@ -66,7 +69,7 @@ app({
   init: {
     arch,
     current: versions[arch].find(v => v.tag === tag),
-    extensions,
+    trackExtensions,
     tag
   },
   view: state =>
@@ -115,6 +118,21 @@ app({
           ])
         ])
       ]),
+
+      state.trackExtensions &&
+        Row([
+          h('details', { open: state.current.version !== currentVersion }, [
+            h('summary', { style: { cursor: 'pointer' } }, [
+              //h('span', {}, `${extensions.length} Extensions found`),
+              //state.currentExts &&
+                //h(
+                  //'span',
+                  //{},
+                  //state.currentExts.version === currentExts ? '✅' : '🚨'
+                //)
+            ])
+          ])
+        ]),
 
       Row([
         h('details', {}, [
@@ -202,12 +220,12 @@ app({
             h('label', {}, [
               h('p', { style: { margin: '0.25rem 0 0' } }, 'Track Extensions'),
               h('input', {
-                checked: state.extensions === 'true',
+                checked: state.trackExtensions,
                 onClick: (state, e) => {
-                  localStorage.extensions = e.target.checked
+                  localStorage.trackExtensions = e.target.checked
                   return {
                     ...state,
-                    extensions: `${e.target.checked}`
+                    trackExtensions: e.target.checked
                   }
                 },
                 style: {
