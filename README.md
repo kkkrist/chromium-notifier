@@ -4,7 +4,7 @@ This extension will periodically check [Woolyss' website](https://chromium.wooly
 
 As of version 1.1.0, tracking and 1-click-installing of updates for all installed extensions is supported too (which support auto-updating). Just be aware that if you enable this, extension update info will need to be fetched via [chromium-extension-service](https://github.com/kkkrist/chromium-extension-service) to bypass [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). This entails that a list of your installed extensions will need to be transmitted to the service.
 
-<img height="293" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/docs/screenshot.webp" width="272" />
+<img height="586" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/docs/screenshot.webp" width="372" />
 
 ## Installation
 
