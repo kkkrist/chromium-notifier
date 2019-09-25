@@ -15,14 +15,16 @@
       "128": "img/icon128.png"
     }
   },
+  "description": "Checks for new versions of Chromium Update Notifications based on Woolyss' Website",
   "icons": {
     "16": "img/icon16.png",
     "32": "img/icon32.png",
     "48": "img/icon48.png",
     "128": "img/icon128.png"
   },
-  "description": "Checks for new versions of Chromium Update Notifications based on Woolyss' Website",
   "manifest_version": 2,
   "name": "Chromium Update Notifications",
+  "permissions": ["management"],
+  "update_url": "github:kkkrist/chromium-notifier",
   "version": "1.0.2"
 }
