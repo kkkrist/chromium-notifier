@@ -13,7 +13,6 @@ const selectStyle = {
   fontWeight: 'bold',
   height: '2em',
   height: 'calc(1.5em + .75rem + 2px)',
-  marginBottom: '',
   padding: '.375rem 1.75rem .375rem .75rem',
   width: '100%'
 }
@@ -27,86 +26,92 @@ const tag = localStorage.getItem('tag')
 const timestamp = Number(localStorage.getItem('timestamp'))
 const versions = JSON.parse(localStorage.getItem('versions'))
 
-const getMeta = state => {
-  const current =
-    state.arch && versions[state.arch].find(({ tag }) => tag === state.tag)
-  return current
+const ChromiumInfo = ({ current }) =>
+  current
     ? [
         h(
           'ul',
-          { style: { listStyleType: 'none', margin: 0, paddingLeft: 0 } },
+          {
+            style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
+          },
           [
             h('li', {}, [
-              h('span', {}, 'Latest: '),
+              h('span', {}, 'Current: '),
               h('a', { href: current.link, target: '_blank' }, current.version)
             ]),
 
             h(
               'li',
               {},
-              `Build: ${current.build} (${new Date(
+              `Revision: ${current.build} (${new Date(
                 current.date
               ).toLocaleDateString()})`
-            ),
-
-            h(
-              'li',
-              {
-                style: {
-                  color: currentVersion !== current.version ? 'red' : undefined,
-                  marginTop: '0.5em'
-                }
-              },
-              [
-                h('span', {}, `Yours: ${currentVersion} `),
-                h('span', {}, currentVersion !== current.version ? '⚠️' : '✅')
-              ]
             )
           ]
         )
       ]
     : []
-}
+
+const Row = children =>
+  h(
+    'div',
+    {
+      style: { borderBottom: borderStyleDefault, padding: paddingDefault }
+    },
+    children
+  )
 
 app({
-  init: { arch, tag },
+  init: { arch, current: versions[arch].find(v => v.tag === tag), tag },
   view: state =>
     h('div', {}, [
-      h(
-        'div',
-        {
-          style: { borderBottom: borderStyleDefault, padding: paddingDefault }
-        },
-        [
-          h(
-            'p',
-            { style: { color: '#202124', fontWeight: 'bold', margin: 0 } },
-            'Chromium Update Notifications'
-          ),
+      Row([
+        h(
+          'p',
+          { style: { color: '#202124', fontWeight: 'bold', margin: 0 } },
+          'Chromium Update Notifications'
+        ),
 
-          h('span', {}, 'based on '),
-          h(
-            'a',
-            { href: 'https://chromium.woolyss.com/', target: '_blank' },
-            'Woolyss'
-          )
-        ]
-      ),
+        h('span', {}, 'based on '),
+        h(
+          'a',
+          { href: 'https://chromium.woolyss.com/', target: '_blank' },
+          'Woolyss'
+        )
+      ]),
 
-      h(
-        'div',
-        {
-          style: { borderBottom: borderStyleDefault, padding: paddingDefault }
-        },
-        getMeta(state)
-      ),
+      Row([
+        h('details', { open: state.current.version !== currentVersion }, [
+          h('summary', { style: { cursor: 'pointer' } }, [
+            h('span', {}, `Chromium: ${currentVersion} `),
+            state.current &&
+              h(
+                'span',
+                {},
+                state.current.version === currentVersion ? '✅' : '🚨'
+              )
+          ]),
 
-      h(
-        'details',
-        {
-          style: { borderBottom: borderStyleDefault, padding: paddingDefault }
-        },
-        [
+          ChromiumInfo(state),
+
+          h('div', { style: { fontSize: 'smaller', marginTop: '1em' } }, [
+            h('span', {}, 'Tracking: '),
+            h(
+              'a',
+              {
+                href: `https://chromium.woolyss.com/#${state.arch}-${
+                  state.tag
+                }`,
+                target: '_black'
+              },
+              `${state.arch}-${state.tag}`
+            )
+          ])
+        ])
+      ]),
+
+      Row([
+        h('details', {}, [
           h('summary', { style: { cursor: 'pointer' } }, 'Settings'),
           h('div', { style: { paddingTop: '0.5rem' } }, [
             h('label', {}, [
@@ -122,6 +127,7 @@ app({
                     return {
                       ...state,
                       arch: e.target.value,
+                      current: undefined,
                       tag: undefined
                     }
                   },
@@ -162,6 +168,7 @@ app({
 
                     return {
                       ...state,
+                      current,
                       tag: e.target.value
                     }
                   },
@@ -186,30 +193,24 @@ app({
               )
             ])
           ])
-        ]
-      ),
+        ])
+      ]),
 
-      h(
-        'div',
-        {
-          style: { borderBottom: borderStyleDefault, padding: paddingDefault }
-        },
-        [
+      Row([
+        h(
+          'small',
+          { style: { display: 'block', margin: 0 } },
+          timestamp
+            ? `Last Update: ${new Date(timestamp).toLocaleString()}`
+            : 'Waiting for data…'
+        ),
+        error &&
           h(
             'small',
-            { style: { display: 'block', margin: 0 } },
-            timestamp
-              ? `Last Update: ${new Date(timestamp).toLocaleString()}`
-              : 'Waiting for data…'
-          ),
-          error &&
-            h(
-              'small',
-              { style: { color: 'red', display: 'block', marginTop: '0.5em' } },
-              error
-            )
-        ]
-      )
+            { style: { color: 'red', display: 'block', marginTop: '0.5em' } },
+            error
+          )
+      ])
     ]),
   node: document.getElementById('app')
 })
