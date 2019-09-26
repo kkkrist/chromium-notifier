@@ -150,7 +150,7 @@ app({
         )
       ]),
 
-      Row([
+      state.arch && state.tag && Row([
         h(
           'details',
           { open: state.current && state.current.version !== currentVersion },
