@@ -204,7 +204,7 @@ app({
         ]),
 
       Row([
-        h('details', {}, [
+        h('details', { open: !state.arch || !state.tag }, [
           h('summary', { style: { cursor: 'pointer' } }, 'Settings'),
           h('div', { style: { paddingTop: '0.5rem' } }, [
             h('label', {}, [
