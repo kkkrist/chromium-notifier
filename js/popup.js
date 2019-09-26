@@ -34,7 +34,7 @@ const versions = JSON.parse(localStorage.versions || null)
 
 const initialState = {
   arch,
-  current: versions[arch].find(v => v.tag === tag),
+  current: arch && tag && versions[arch].find(v => v.tag === tag),
   extensionsNew,
   extensionsTrack,
   tag
@@ -75,7 +75,8 @@ const ExtensionsInfo = ({ extensions }) => [
       style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
     },
     extensions.map(ext => {
-      const info = extensionsInfo.find(({ id }) => id === ext.id)
+      const info =
+        extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
       return h('li', {}, [
         h(
           'span',
@@ -150,29 +151,45 @@ app({
       ]),
 
       Row([
-        h('details', { open: state.current.version !== currentVersion }, [
-          h(
-            'summary',
-            { style: { cursor: 'pointer' } },
-            `Chromium ${currentVersion} `
-          ),
-
-          ChromiumInfo(state),
-
-          h('div', { style: { fontSize: 'smaller', marginTop: '1em' } }, [
-            h('span', {}, 'Tracking '),
+        h(
+          'details',
+          { open: state.current && state.current.version !== currentVersion },
+          [
             h(
-              'a',
-              {
-                href: `https://chromium.woolyss.com/#${state.arch}-${
-                  state.tag
-                }`,
-                target: '_black'
-              },
-              `${state.arch}-${state.tag}`
+              'summary',
+              { style: { cursor: 'pointer' } },
+              `Chromium ${currentVersion} `
+            ),
+
+            ChromiumInfo(state),
+
+            h(
+              'div',
+              { style: { fontSize: 'smaller', marginTop: '1em' } },
+              state.arch && state.tag
+                ? [
+                    h('span', {}, 'Tracking '),
+                    h(
+                      'a',
+                      {
+                        href: `https://chromium.woolyss.com/#${state.arch}-${
+                          state.tag
+                        }`,
+                        target: '_black'
+                      },
+                      `${state.arch}-${state.tag}`
+                    )
+                  ]
+                : [
+                    h(
+                      'span',
+                      {},
+                      'Please go to settings and set platform & tag!'
+                    )
+                  ]
             )
-          ])
-        ])
+          ]
+        )
       ]),
 
       state.extensionsTrack &&

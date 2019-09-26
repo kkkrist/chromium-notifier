@@ -65,7 +65,10 @@ const handleError = e => {
 const main = () => {
   const arch = localStorage.arch
   const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
-  const extensionsTrack = localStorage.extensionsTrack === 'true'
+  const extensionsTrack =
+    localStorage.extensionsTrack === undefined
+      ? true
+      : localStorage.extensionsTrack === 'true'
   const tag = localStorage.tag
   const timestamp = Number(localStorage.timestamp)
   const versions = JSON.parse(localStorage.versions || null)
@@ -105,11 +108,13 @@ const main = () => {
     }
 
     Promise.all(p).then(([div, extensionsInfo]) => {
-      const extensionsNew = !extensionsInfo.every(e =>
-        extensions.find(({ version }) => version === e.version)
-      )
+      const extensionsNew =
+        extensionsInfo &&
+        !extensionsInfo.every(e =>
+          extensions.find(({ version }) => version === e.version)
+        )
       delete localStorage.error
-      localStorage.extensionsInfo = JSON.stringify(extensionsInfo)
+      localStorage.extensionsInfo = JSON.stringify(extensionsInfo || null)
       localStorage.extensionsNew = extensionsNew
       localStorage.timestamp = new Date().getTime()
       localStorage.versions = JSON.stringify(getVersions(div))
