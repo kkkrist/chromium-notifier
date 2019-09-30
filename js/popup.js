@@ -1,4 +1,5 @@
 import { h, app } from './vendor/hyperapp-2.0.1.js'
+import { getExtensionsInfo } from './background.js'
 
 chrome.browserAction.setBadgeText({ text: '' })
 chrome.browserAction.setBadgeBackgroundColor({ color: [0, 150, 180, 255] })
@@ -23,11 +24,7 @@ const currentVersion = window.navigator.userAgent.match(
 )[1]
 const error = localStorage.error
 const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
-const extensionsNew = localStorage.extensionsNew === 'true'
-const extensionsTrack =
-  localStorage.extensionsTrack === undefined
-    ? true
-    : localStorage.extensionsTrack === 'true'
+const extensionsTrack = localStorage.extensionsTrack === 'true'
 const tag = localStorage.tag
 const timestamp = Number(localStorage.timestamp)
 const versions = JSON.parse(localStorage.versions || null)
@@ -35,10 +32,41 @@ const versions = JSON.parse(localStorage.versions || null)
 const initialState = {
   arch,
   current: arch && tag && versions[arch].find(v => v.tag === tag),
-  extensionsNew,
+  extensionsInfo,
   extensionsTrack,
   tag
 }
+
+const handleExtTracking = (state, e) => [
+  state,
+  [
+    dispatch =>
+      getExtensionsInfo().then(extensionsInfo => {
+        const extensionsNew =
+          extensionsInfo &&
+          !extensionsInfo.every(e =>
+            state.extensions.find(({ version }) => version === e.version)
+          )
+
+        delete localStorage.error
+        localStorage.extensionsInfo = JSON.stringify(extensionsInfo || null)
+        localStorage.extensionsTrack = e.target.checked
+
+        dispatch({
+          ...state,
+          extensionsInfo,
+          extensionsTrack: e.target.checked
+        })
+
+        if (extensionsNew) {
+          chrome.browserAction.setBadgeBackgroundColor({
+            color: [0, 150, 180, 255]
+          })
+          chrome.browserAction.setBadgeText({ text: 'New' })
+        }
+      })
+  ]
+]
 
 const ChromiumInfo = ({ current }) =>
   current
@@ -68,9 +96,11 @@ const ChromiumInfo = ({ current }) =>
       ]
     : []
 
-const ExtensionsInfo = ({ extensions }) => {
+const ExtensionsInfo = ({ extensions, extensionsInfo }) => {
   const supported = extensions
-    .filter(ext => extensionsInfo.find(({ id }) => id === ext.id))
+    .filter(
+      ext => extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+    )
     .sort((a, b) => a.name.localeCompare(b.name))
   const unsupported = extensions
     .filter(ext => !supported.find(({ id }) => id === ext.id))
@@ -216,12 +246,23 @@ app({
       state.extensionsTrack &&
         state.extensions &&
         Row([
-          h('details', { open: state.extensionsNew }, [
-            h('summary', { style: { cursor: 'pointer' } }, [
-              h('span', {}, `${state.extensions.length} Extensions`)
-            ]),
-            h('table', {}, ExtensionsInfo(state))
-          ])
+          h(
+            'details',
+            {
+              open:
+                state.extensions &&
+                extensionsInfo &&
+                !extensionsInfo.every(e =>
+                  state.extensions.find(({ version }) => version === e.version)
+                )
+            },
+            [
+              h('summary', { style: { cursor: 'pointer' } }, [
+                h('span', {}, `${state.extensions.length} Extensions`)
+              ]),
+              h('table', {}, ExtensionsInfo(state))
+            ]
+          )
         ]),
 
       Row([
@@ -312,13 +353,7 @@ app({
                 h('span', {}, 'Track Extensions '),
                 h('input', {
                   checked: state.extensionsTrack,
-                  onClick: (state, e) => {
-                    localStorage.extensionsTrack = e.target.checked
-                    return {
-                      ...state,
-                      extensionsTrack: e.target.checked
-                    }
-                  },
+                  onClick: handleExtTracking,
                   type: 'checkbox'
                 })
               ])
