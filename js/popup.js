@@ -142,21 +142,24 @@ const ExtensionsInfo = ({ extensions, extensionsInfo }) => {
         ])
       })
     ),
-    h('p', { style: { marginBottom: 0 } }, 'No update info available:'),
-    h(
-      'ul',
-      {
-        style: { margin: 0, padding: '0.5rem 0px 0px 1.25rem' }
-      },
-      unsupported.map(ext =>
-        h('li', {}, [
-          ext.homepageUrl
-            ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
-            : h('span', {}, ext.name),
-          h('code', {}, [h('span', {}, ` v${ext.version} `)])
-        ])
-      )
-    )
+    unsupported.length > 0 &&
+      h('div', {}, [
+        h('p', { style: { marginBottom: 0 } }, 'No update info available:'),
+        h(
+          'ul',
+          {
+            style: { margin: 0, padding: '0.5rem 0px 0px 1.25rem' }
+          },
+          unsupported.map(ext =>
+            h('li', {}, [
+              ext.homepageUrl
+                ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
+                : h('span', {}, ext.name),
+              h('code', {}, [h('span', {}, ` v${ext.version} `)])
+            ])
+          )
+        )
+      ])
   ]
 }
 
