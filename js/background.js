@@ -128,3 +128,4 @@ const main = () => {
 
 main()
 setInterval(main, 30 * 60 * 1000)
+chrome.windows.onFocusChanged.addListener(win => win > -1 && main())
