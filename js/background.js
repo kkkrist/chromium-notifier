@@ -2,11 +2,13 @@ const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 
+let extensions = []
+
 export const getExtensionsInfo = () =>
   new Promise(resolve =>
     chrome.management.getAll(exts =>
       resolve(
-        exts.map(ext => ({
+        (extensions = exts).map(ext => ({
           id: ext.id,
           updateUrl: ext.updateUrl
         }))
@@ -99,7 +101,6 @@ const main = () => {
     timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
   ) {
     const p = [getWrapper()]
-    let extensions = []
 
     if (extensionsTrack) {
       p.push(getExtensionsInfo())
