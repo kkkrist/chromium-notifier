@@ -79,7 +79,7 @@ const ChromiumInfo = ({ current }) =>
           [
             h('li', {}, [
               current &&
-                h('span', {}, current.version === currentVersion ? '✅' : '⚠️'),
+                h('span', {}, current.version === currentVersion ? '✅' : '🚨'),
               h('span', {}, 'Current: '),
               h('a', { href: current.link, target: '_blank' }, current.version)
             ]),
@@ -116,7 +116,7 @@ const ExtensionsInfo = ({ extensions, extensionsInfo }) => {
         const info =
           extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
         return h('li', {}, [
-          h('span', {}, `${info.version !== ext.version ? '⚠️' : '✅'} `),
+          h('span', {}, `${info.version !== ext.version ? '🚨' : '✅'} `),
           ext.homepageUrl
             ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
             : h('span', {}, ext.name),
