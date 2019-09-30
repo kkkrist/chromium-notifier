@@ -2,6 +2,27 @@ const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 
+export const getExtensionsInfo = () =>
+  new Promise(resolve =>
+    chrome.management.getAll(exts =>
+      resolve(
+        exts.map(ext => ({
+          id: ext.id,
+          updateUrl: ext.updateUrl
+        }))
+      )
+    )
+  ).then(extensions =>
+    fetch('https://chrome-extension-service.kkkrist.now.sh/api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prodversion: currentVersion,
+        extensions
+      })
+    }).then(res => res.json())
+  )
+
 const getMetaInfo = (div, arch, tag) => {
   const id = `#${arch}-${tag}`
   let textContent = div.querySelector(id).querySelector('details summary')
@@ -65,10 +86,7 @@ const handleError = e => {
 const main = () => {
   const arch = localStorage.arch
   const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
-  const extensionsTrack =
-    localStorage.extensionsTrack === undefined
-      ? true
-      : localStorage.extensionsTrack === 'true'
+  const extensionsTrack = localStorage.extensionsTrack === 'true'
   const tag = localStorage.tag
   const timestamp = Number(localStorage.timestamp)
   const versions = JSON.parse(localStorage.versions || null)
@@ -76,7 +94,7 @@ const main = () => {
   const current = versions && arch && versions[arch].find(v => v.tag === tag)
 
   if (
-    !extensionsInfo ||
+    (extensionsTrack && !extensionsInfo) ||
     !versions ||
     timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
   ) {
@@ -84,27 +102,7 @@ const main = () => {
     let extensions = []
 
     if (extensionsTrack) {
-      p.push(
-        new Promise(resolve =>
-          chrome.management.getAll(exts =>
-            resolve(
-              (extensions = exts).map(ext => ({
-                id: ext.id,
-                updateUrl: ext.updateUrl
-              }))
-            )
-          )
-        ).then(extensions =>
-          fetch('https://chrome-extension-service.kkkrist.now.sh/api', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              prodversion: currentVersion,
-              extensions
-            })
-          }).then(res => res.json())
-        )
-      )
+      p.push(getExtensionsInfo())
     }
 
     Promise.all(p).then(([div, extensionsInfo]) => {
@@ -115,7 +113,6 @@ const main = () => {
         )
       delete localStorage.error
       localStorage.extensionsInfo = JSON.stringify(extensionsInfo || null)
-      localStorage.extensionsNew = extensionsNew
       localStorage.timestamp = new Date().getTime()
       localStorage.versions = JSON.stringify(getVersions(div))
 
