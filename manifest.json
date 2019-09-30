@@ -1,10 +1,8 @@
 {
   "author": "Christian Mund <opensource@mundpropaganda.net",
   "background": {
-    "persistent": true,
-    "scripts": [
-      "js/background.js"
-    ]
+    "page": "background.html",
+    "persistent": true
   },
   "browser_action": {
     "default_popup": "popup.html",
