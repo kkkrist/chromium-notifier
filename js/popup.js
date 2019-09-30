@@ -51,7 +51,7 @@ const ChromiumInfo = ({ current }) =>
           [
             h('li', {}, [
               current &&
-                h('span', {}, current.version === currentVersion ? '✅' : '🚨'),
+                h('span', {}, current.version === currentVersion ? '✅' : '⚠️'),
               h('span', {}, 'Current: '),
               h('a', { href: current.link, target: '_blank' }, current.version)
             ]),
@@ -68,48 +68,67 @@ const ChromiumInfo = ({ current }) =>
       ]
     : []
 
-const ExtensionsInfo = ({ extensions }) => [
-  h(
-    'ul',
-    {
-      style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
-    },
-    extensions.map(ext => {
-      const info =
-        extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
-      return h('li', {}, [
-        h(
-          'span',
-          {},
-          `${!info ? '❓' : info.version !== ext.version ? '🚨' : '✅'} `
-        ),
-        ext.homepageUrl
-          ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
-          : h('span', {}, ext.name),
-        h('code', {}, [
-          h('span', {}, ` v${ext.version} `),
-          info &&
+const ExtensionsInfo = ({ extensions }) => {
+  const supported = extensions
+    .filter(ext => extensionsInfo.find(({ id }) => id === ext.id))
+    .sort((a, b) => a.name.localeCompare(b.name))
+  const unsupported = extensions
+    .filter(ext => !supported.find(({ id }) => id === ext.id))
+    .sort((a, b) => a.name.localeCompare(b.name))
+
+  return [
+    h(
+      'ul',
+      {
+        style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
+      },
+      supported.map(ext => {
+        const info =
+          extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+        return h('li', {}, [
+          h('span', {}, `${info.version !== ext.version ? '⚠️' : '✅'} `),
+          ext.homepageUrl
+            ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
+            : h('span', {}, ext.name),
+          h('code', {}, [
+            h('span', {}, ` v${ext.version} `),
             info.version !== ext.version &&
-            h(
-              'a',
-              {
-                href: info.codebase.endsWith('crx')
-                  ? `${
-                      info.updateUrl
-                    }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
-                      info.id
-                    }%26installsource%3Dondemand%26uc`
-                  : info.codebase,
-                style: { color: 'red' },
-                target: '_blank'
-              },
-              `(v${info.version})`
-            )
+              h(
+                'a',
+                {
+                  href: info.codebase.endsWith('crx')
+                    ? `${
+                        info.updateUrl
+                      }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
+                        info.id
+                      }%26installsource%3Dondemand%26uc`
+                    : info.codebase,
+                  style: { color: 'red' },
+                  target: '_blank'
+                },
+                `(v${info.version})`
+              )
+          ])
         ])
-      ])
-    })
-  )
-]
+      })
+    ),
+    h('p', { style: { marginBottom: 0 } }, 'No update info available:'),
+    h(
+      'ul',
+      {
+        style: { margin: 0, padding: '0.5rem 0px 0px 1.25rem' }
+      },
+      unsupported.map(ext =>
+        h('li', {}, [
+          ext.homepageUrl
+            ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
+            : h('span', {}, ext.name),
+          h('code', {}, [h('span', {}, ` v${ext.version} `)])
+        ])
+      )
+    )
+  ]
+}
 
 const Row = children =>
   h(
@@ -150,47 +169,49 @@ app({
         )
       ]),
 
-      state.arch && state.tag && Row([
-        h(
-          'details',
-          { open: state.current && state.current.version !== currentVersion },
-          [
-            h(
-              'summary',
-              { style: { cursor: 'pointer' } },
-              `Chromium ${currentVersion} `
-            ),
+      state.arch &&
+        state.tag &&
+        Row([
+          h(
+            'details',
+            { open: state.current && state.current.version !== currentVersion },
+            [
+              h(
+                'summary',
+                { style: { cursor: 'pointer' } },
+                `Chromium ${currentVersion} `
+              ),
 
-            ChromiumInfo(state),
+              ChromiumInfo(state),
 
-            h(
-              'div',
-              { style: { fontSize: 'smaller', marginTop: '1em' } },
-              state.arch && state.tag
-                ? [
-                    h('span', {}, 'Tracking '),
-                    h(
-                      'a',
-                      {
-                        href: `https://chromium.woolyss.com/#${state.arch}-${
-                          state.tag
-                        }`,
-                        target: '_black'
-                      },
-                      `${state.arch}-${state.tag}`
-                    )
-                  ]
-                : [
-                    h(
-                      'span',
-                      {},
-                      'Please go to settings and set platform & tag!'
-                    )
-                  ]
-            )
-          ]
-        )
-      ]),
+              h(
+                'div',
+                { style: { fontSize: 'smaller', marginTop: '1em' } },
+                state.arch && state.tag
+                  ? [
+                      h('span', {}, 'Tracking '),
+                      h(
+                        'a',
+                        {
+                          href: `https://chromium.woolyss.com/#${state.arch}-${
+                            state.tag
+                          }`,
+                          target: '_black'
+                        },
+                        `${state.arch}-${state.tag}`
+                      )
+                    ]
+                  : [
+                      h(
+                        'span',
+                        {},
+                        'Please go to settings and set platform & tag!'
+                      )
+                    ]
+              )
+            ]
+          )
+        ]),
 
       state.extensionsTrack &&
         state.extensions &&
