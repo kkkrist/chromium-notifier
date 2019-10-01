@@ -41,10 +41,17 @@ const getMetaInfo = (div, arch, tag) => {
     .map(a => a.split(' • '))
     .flat()
 
+  const link = div.querySelector(id).querySelector('b a, strong a').href
+
   return {
     build: info[1],
     date: new Date(info[2]).getTime(),
-    link: div.querySelector(id).querySelector('b a, strong a').href,
+    link: link.startsWith('http')
+      ? link
+      : link.replace(
+          /^chrome-extension:\/\/[a-z]+/,
+          'https://chromium.woolyss.com'
+        ),
     tag,
     version: info[0].trimStart().trimEnd()
   }
