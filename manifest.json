@@ -25,5 +25,5 @@
   "name": "Chromium Update Notifications",
   "permissions": ["management"],
   "update_url": "github:kkkrist/chromium-notifier",
-  "version": "1.2.1"
+  "version": "1.2.2"
 }
