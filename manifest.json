@@ -13,6 +13,13 @@
       "128": "img/icon128.png"
     }
   },
+  "content_scripts": [
+    {
+      "js": ["js/webstore.js"],
+      "matches": ["*://chrome.google.com/webstore/detail/*"],
+      "run_at": "document_start"
+    }
+  ],
   "description": "Checks for new versions of Chromium Update Notifications based on Woolyss' Website",
   "icons": {
     "16": "img/icon16.png",
@@ -23,7 +30,7 @@
   "homepage_url": "https://github.com/kkkrist/chromium-notifier",
   "manifest_version": 2,
   "name": "Chromium Update Notifications",
-  "permissions": ["management"],
+  "permissions": ["management", "*://chrome.google.com/webstore/*"],
   "update_url": "github:kkkrist/chromium-notifier",
   "version": "1.2.2"
 }
