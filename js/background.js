@@ -48,9 +48,9 @@ const main = () => {
     timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
   ) {
     const p = [
-      fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5').then(res =>
-        res.json()
-      )
+      fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
+        method: 'POST'
+      }).then(res => res.json())
     ]
 
     if (extensionsTrack) {
