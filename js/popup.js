@@ -95,7 +95,7 @@ const ChromiumInfo = ({ current }) =>
               h('span', {}, 'Downloads: '),
               ...current.links.map(({ label, url }, i) =>
                 h('span', {}, [
-                  h('a', { href: url }, label),
+                  h('a', { href: url, target: '_blank' }, label),
                   i + 1 < current.links.length && h('span', {}, ', ')
                 ])
               )
