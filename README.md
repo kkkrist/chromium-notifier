@@ -12,11 +12,14 @@ As of version 1.1.0, tracking and 1-click-installing of updates for all installe
 2. Clone repository or download a [release](https://github.com/kkkrist/chromium-notifier/releases) and unpack into a local folder
 3. Navigate to [chrome://extensions](chrome://extensions)
 4. Enable developer mode
-4. Drag-and-drop the folder into the browser window or click on "Load unpacked extension" and select folder
+5. Drag-and-drop the folder into the browser window or click on "Load unpacked extension" and select folder
+
 
 ## Configuration
 
 Click on the extension's icon, select platform (mac, win32 or win64) and tag – i.e. the Chromium version you're using and enable tracking of extension updates if desired.
+
+To enable 1-click installation of extension updates, you need to set the flag `chrome://flags/#extension-mime-request-handling` to "Always prompt for install".
 
 ## Extension developers
 
