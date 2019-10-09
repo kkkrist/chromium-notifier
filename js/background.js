@@ -25,66 +25,6 @@ export const getExtensionsInfo = () =>
     }).then(res => res.json())
   )
 
-const getMetaInfo = (div, arch, tag) => {
-  const id = `#${arch}-${tag}`
-  let textContent = div.querySelector(id).querySelector('details summary')
-    .textContent
-
-  if (!textContent.match(/\([0-9]+\)/)) {
-    textContent = textContent.replace(/ • /, ' () • ')
-  }
-
-  const info = textContent
-    .split(' (')
-    .map(a => a.split(/\) . /))
-    .flat()
-    .map(a => a.split(' • '))
-    .flat()
-
-  const link = div.querySelector(id).querySelector('b a, strong a').href
-
-  return {
-    build: info[1],
-    date: new Date(info[2]).getTime(),
-    link: link.startsWith('http')
-      ? link
-      : link.replace(
-          /^chrome-extension:\/\/[a-z]+/,
-          'https://chromium.woolyss.com'
-        ),
-    tag,
-    version: info[0].trimStart().trimEnd()
-  }
-}
-
-const getVersions = div =>
-  Array.from(div.querySelectorAll('.chromium'))
-    .filter(a => a.id.match(/^(mac|win)/))
-    .reduce((acc, el) => {
-      const arr = el.id.split('-')
-      const arch = arr.shift()
-      const item = getMetaInfo(div, arch, arr.join('-'))
-      if (acc[arch]) {
-        acc[arch].push(item)
-      } else {
-        acc[arch] = [item]
-      }
-      return acc
-    }, {})
-
-const getWrapper = () =>
-  fetch('https://chromium.woolyss.com/')
-    .then(res => res.text())
-    .then(text => {
-      const wrapper = document.createElement('div')
-      wrapper.innerHTML = text
-        .replace(/^.*<body>/, '')
-        .replace(/<\/body>.*$/, '')
-        .replace(/<script.*<\/script>/g, '')
-      return wrapper
-    })
-    .catch(handleError)
-
 const handleError = e => {
   console.error(e)
   localStorage.error = e.message
@@ -107,13 +47,17 @@ const main = () => {
     !versions ||
     timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
   ) {
-    const p = [getWrapper()]
+    const p = [
+      fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5').then(res =>
+        res.json()
+      )
+    ]
 
     if (extensionsTrack) {
       p.push(getExtensionsInfo())
     }
 
-    Promise.all(p).then(([div, extensionsInfo]) => {
+    Promise.all(p).then(([versions, extensionsInfo]) => {
       const extensionsNew =
         extensionsInfo &&
         !extensionsInfo.every(e =>
@@ -122,7 +66,7 @@ const main = () => {
       delete localStorage.error
       localStorage.extensionsInfo = JSON.stringify(extensionsInfo || null)
       localStorage.timestamp = new Date().getTime()
-      localStorage.versions = JSON.stringify(getVersions(div))
+      localStorage.versions = JSON.stringify(versions)
 
       if ((current && currentVersion !== current.version) || extensionsNew) {
         chrome.browserAction.setBadgeBackgroundColor({

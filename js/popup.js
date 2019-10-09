@@ -80,17 +80,26 @@ const ChromiumInfo = ({ current }) =>
             h('li', {}, [
               current &&
                 h('span', {}, current.version === currentVersion ? '✅' : '🚨'),
-              h('span', {}, 'Current: '),
-              h('a', { href: current.link, target: '_blank' }, current.version)
+              h('span', {}, `Current: ${current.version}`)
             ]),
 
             h(
               'li',
               {},
-              `Revision: ${current.build} (${new Date(
-                current.date
+              `Revision: ${current.revision} (${new Date(
+                current.timestamp * 1000
               ).toLocaleDateString()})`
-            )
+            ),
+
+            h('li', {}, [
+              h('span', {}, 'Downloads: '),
+              ...current.links.map(({ label, url }, i) =>
+                h('span', {}, [
+                  h('a', { href: url }, label),
+                  i + 1 < current.links.length && h('span', {}, ', ')
+                ])
+              )
+            ])
           ]
         )
       ]
