@@ -6,6 +6,12 @@ chrome.browserAction.setBadgeBackgroundColor({ color: [0, 150, 180, 255] })
 
 const borderStyleDefault = '1px solid #dadce0'
 const paddingDefault = '1rem'
+const badgeStyle = {
+  backgroundColor: 'orangered',
+  borderRadius: '4px',
+  color: 'white',
+  padding: '0 0.25em'
+}
 const selectStyle = {
   backgroundColor: 'white',
   border: borderStyleDefault,
@@ -77,25 +83,26 @@ const ChromiumInfo = ({ current }) =>
             style: { listStyleType: 'none', margin: 0, padding: '0.5rem 0 0 0' }
           },
           [
-            h('li', {}, [
-              current &&
-                h(
-                  'span',
-                  { style: { marginRight: '0.25em' } },
-                  current.version === currentVersion ? '✅' : '🚨'
-                ),
-              h('span', {}, `Current: ${current.version}`)
+            h('li', { style: { padding: '0.1rem 0' } }, [
+              h('span', {}, 'Current: '),
+              h(
+                'code',
+                {
+                  style: current.version === currentVersion ? {} : badgeStyle
+                },
+                `v${current.version} `
+              )
             ]),
 
             h(
               'li',
-              {},
+              { style: { padding: '0.1rem 0' } },
               `Revision: ${current.revision} (${new Date(
                 current.timestamp * 1000
               ).toLocaleDateString()})`
             ),
 
-            h('li', {}, [
+            h('li', { style: { padding: '0.1rem 0' } }, [
               h('span', {}, 'Downloads: '),
               ...current.links.map(({ label, url }, i) =>
                 h('span', {}, [
@@ -128,8 +135,13 @@ const ExtensionsInfo = ({ extensions, extensionsInfo }) => {
       supported.map(ext => {
         const info =
           extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
-        return h('li', {}, [
-          h('span', {}, `${info.version !== ext.version ? '🚨' : '✅'} `),
+        return h('li', { style: { padding: '0.1rem 0' } }, [
+          h('input', {
+            checked: ext.enabled,
+            style: { margin: '0 0.75em 0 0' },
+            title: ext.enabled ? 'Disable' : 'Enable',
+            type: 'checkbox'
+          }),
           ext.homepageUrl
             ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
             : h('span', {}, ext.name),
@@ -146,10 +158,10 @@ const ExtensionsInfo = ({ extensions, extensionsInfo }) => {
                         info.id
                       }%26installsource%3Dondemand%26uc`
                     : info.codebase,
-                  style: { color: 'red' },
+                  style: badgeStyle,
                   target: '_blank'
                 },
-                `(v${info.version})`
+                `v${info.version}`
               )
           ])
         ])
@@ -219,7 +231,7 @@ app({
                   'Chromium Update Notifications'
                 ),
                 h(
-                  'span',
+                  'code',
                   {},
                   ` v${
                     state.extensions.find(({ id }) => id === chrome.runtime.id)
@@ -263,11 +275,10 @@ app({
             'details',
             { open: state.current && state.current.version !== currentVersion },
             [
-              h(
-                'summary',
-                { style: { cursor: 'pointer' } },
-                `Chromium ${currentVersion} `
-              ),
+              h('summary', { style: { cursor: 'pointer' } }, [
+                h('span', {}, `Chromium `),
+                h('code', {}, `v${currentVersion}`)
+              ]),
 
               ChromiumInfo(state),
 
