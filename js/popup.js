@@ -197,26 +197,58 @@ app({
   view: state =>
     h('div', {}, [
       Row([
-        h('p', { style: { color: '#202124', margin: 0 } }, [
-          h(
-            'span',
-            { style: { fontWeight: 'bold' } },
-            'Chromium Update Notifications'
-          ),
-          h(
-            'span',
-            {},
-            ` v${
-              state.extensions.find(({ id }) => id === chrome.runtime.id)
-                .version
-            }`
-          )
-        ]),
-        h('span', {}, 'based on '),
         h(
-          'a',
-          { href: 'https://chromium.woolyss.com/', target: '_blank' },
-          'Woolyss'
+          'div',
+          {
+            style: {
+              display: 'flex',
+              justifyContent: 'space-between',
+              margin: '0 -0.25rem'
+            }
+          },
+          [
+            h('div', { style: { margin: '0 0.25rem' } }, [
+              h('p', { style: { color: '#202124', margin: 0 } }, [
+                h(
+                  'span',
+                  { style: { fontWeight: 'bold' } },
+                  'Chromium Update Notifications'
+                ),
+                h(
+                  'span',
+                  {},
+                  ` v${
+                    state.extensions.find(({ id }) => id === chrome.runtime.id)
+                      .version
+                  }`
+                )
+              ]),
+              h('span', {}, 'based on '),
+              h(
+                'a',
+                { href: 'https://chromium.woolyss.com/', target: '_blank' },
+                'Woolyss'
+              )
+            ]),
+            h('div', { style: { margin: '0 0.25rem' } }, [
+              h(
+                'a',
+                {
+                  href: 'https://github.com/kkkrist/chromium-notifier',
+                  target: '_blank'
+                },
+                [
+                  h('img', {
+                    src: '../img/github.svg',
+                    style: {
+                      height: '1rem',
+                      width: 'auto'
+                    }
+                  })
+                ]
+              )
+            ])
+          ]
         )
       ]),
 
