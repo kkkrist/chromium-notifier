@@ -197,12 +197,21 @@ app({
   view: state =>
     h('div', {}, [
       Row([
-        h(
-          'p',
-          { style: { color: '#202124', fontWeight: 'bold', margin: 0 } },
-          'Chromium Update Notifications'
-        ),
-
+        h('p', { style: { color: '#202124', margin: 0 } }, [
+          h(
+            'span',
+            { style: { fontWeight: 'bold' } },
+            'Chromium Update Notifications'
+          ),
+          h(
+            'span',
+            {},
+            ` v${
+              state.extensions.find(({ id }) => id === chrome.runtime.id)
+                .version
+            }`
+          )
+        ]),
         h('span', {}, 'based on '),
         h(
           'a',
