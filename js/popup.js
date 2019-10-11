@@ -79,7 +79,11 @@ const ChromiumInfo = ({ current }) =>
           [
             h('li', {}, [
               current &&
-                h('span', {}, current.version === currentVersion ? '✅' : '🚨'),
+                h(
+                  'span',
+                  { style: { marginRight: '0.25em' } },
+                  current.version === currentVersion ? '✅' : '🚨'
+                ),
               h('span', {}, `Current: ${current.version}`)
             ]),
 
