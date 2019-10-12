@@ -135,36 +135,54 @@ const ExtensionsInfo = ({ extensions, extensionsInfo }) => {
       supported.map(ext => {
         const info =
           extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
-        return h('li', { style: { padding: '0.1rem 0' } }, [
-          h('input', {
-            checked: ext.enabled,
-            style: { margin: '0 0.75em 0 0' },
-            title: ext.enabled ? 'Disable' : 'Enable',
-            type: 'checkbox'
-          }),
-          ext.homepageUrl
-            ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
-            : h('span', {}, ext.name),
-          h('code', {}, [
-            h('span', {}, ` v${ext.version} `),
-            info.version !== ext.version &&
-              h(
-                'a',
-                {
-                  href: info.codebase.endsWith('crx')
-                    ? `${
-                        info.updateUrl
-                      }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
-                        info.id
-                      }%26installsource%3Dondemand%26uc`
-                    : info.codebase,
-                  style: badgeStyle,
-                  target: '_blank'
-                },
-                `v${info.version}`
-              )
-          ])
-        ])
+        return h(
+          'li',
+          {
+            style: {
+              opacity: ext.enabled ? '1.0' : '0.66',
+              padding: '0.1rem 0'
+            }
+          },
+          [
+            h('input', {
+              checked: ext.enabled,
+              onChange: (state, e) => {
+                chrome.management.setEnabled(ext.id, !ext.enabled)
+                const newState = { ...state }
+                const i = newState.extensions.findIndex(
+                  ({ id }) => id === ext.id
+                )
+                newState.extensions[i].enabled = !ext.enabled
+                return newState
+              },
+              style: { margin: '0 0.75em 0 0' },
+              title: ext.enabled ? 'Disable' : 'Enable',
+              type: 'checkbox'
+            }),
+            ext.homepageUrl
+              ? h('a', { href: ext.homepageUrl, target: '_blank' }, ext.name)
+              : h('span', {}, ext.name),
+            h('code', {}, [
+              h('span', {}, ` v${ext.version} `),
+              info.version !== ext.version &&
+                h(
+                  'a',
+                  {
+                    href: info.codebase.endsWith('crx')
+                      ? `${
+                          info.updateUrl
+                        }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
+                          info.id
+                        }%26installsource%3Dondemand%26uc`
+                      : info.codebase,
+                    style: badgeStyle,
+                    target: '_blank'
+                  },
+                  `v${info.version}`
+                )
+            ])
+          ]
+        )
       })
     ),
     unsupported.length > 0 &&
