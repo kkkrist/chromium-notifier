@@ -31,9 +31,13 @@ const currentVersion = window.navigator.userAgent.match(
 const error = localStorage.error
 const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
 const extensionsTrack = localStorage.extensionsTrack === 'true'
-const tag = localStorage.tag
 const timestamp = Number(localStorage.timestamp)
 const versions = JSON.parse(localStorage.versions || null)
+
+const tag =
+  arch && versions[arch].find(({ tag }) => tag === localStorage.tag)
+    ? localStorage.tag
+    : undefined
 
 const initialState = {
   arch,
