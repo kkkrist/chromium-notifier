@@ -1,9 +1,6 @@
 import { h, app } from './vendor/hyperapp-2.0.1.js'
 import { getExtensionsInfo } from './background.js'
 
-chrome.browserAction.setBadgeText({ text: '' })
-chrome.browserAction.setBadgeBackgroundColor({ color: [0, 150, 180, 255] })
-
 const borderStyleDefault = '1px solid #dadce0'
 const paddingDefault = '1rem'
 const badgeStyle = {
@@ -464,7 +461,7 @@ app({
           h(
             'small',
             { style: { color: 'red', display: 'block', marginTop: '0.5em' } },
-            error
+            `Error: ${error}`
           )
       ])
     ]),

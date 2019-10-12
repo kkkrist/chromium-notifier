@@ -47,6 +47,9 @@ const main = () => {
     !versions ||
     timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
   ) {
+    chrome.browserAction.setBadgeText({ text: '' })
+    chrome.browserAction.setBadgeBackgroundColor({ color: [0, 150, 180, 255] })
+
     const p = [
       fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
         method: 'POST'
