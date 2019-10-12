@@ -6,7 +6,7 @@ As of version 1.1.0, tracking and 1-click-installing of updates for all installe
 
 As of version 1.4.0, all installed extensions can be enabled/disabled via a checkbox next to it in the list. Quickly enable/disable extensions you rarely use to increase privacy and browser speed.
 
-<img height="586" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/img/screenshot.webp" width="372" />
+<img height="639" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/img/screenshot.webp" width="375" />
 
 ## Installation
 
