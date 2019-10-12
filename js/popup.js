@@ -1,4 +1,4 @@
-import { h, app } from './vendor/hyperapp-2.0.1.js'
+import { h, app } from './vendor/hyperapp-2.0.2.js'
 import { getExtensionsInfo } from './background.js'
 
 const borderStyleDefault = '1px solid #dadce0'
