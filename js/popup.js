@@ -440,7 +440,7 @@ app({
                 h('span', {}, 'Track Extensions '),
                 h('input', {
                   checked: state.extensionsTrack,
-                  onClick: handleExtTracking,
+                  onChange: handleExtTracking,
                   type: 'checkbox'
                 })
               ])
