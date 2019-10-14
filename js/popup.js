@@ -437,12 +437,13 @@ app({
 
             h('label', {}, [
               h('p', { style: { margin: '1rem 0 0' } }, [
-                h('span', {}, 'Track Extensions '),
                 h('input', {
                   checked: state.extensionsTrack,
                   onChange: handleExtTracking,
+                  style: { margin: '0 0.75em 0 0' },
                   type: 'checkbox'
-                })
+                }),
+                h('span', {}, 'Track Extensions ')
               ])
             ])
           ])
