@@ -24,6 +24,6 @@
   "manifest_version": 2,
   "name": "Chromium Update Notifications",
   "permissions": ["management"],
-  "update_url": "github:kkkrist/chromium-notifier",
+  "update_url": "https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/gupdate.xml",
   "version": "1.4.0"
 }
