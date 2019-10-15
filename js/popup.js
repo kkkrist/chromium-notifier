@@ -1,6 +1,8 @@
 import { h, app } from './vendor/hyperapp-2.0.2.js'
 import { getExtensionsInfo } from './background.js'
 
+chrome.browserAction.setBadgeText({ text: '' })
+
 const borderStyleDefault = '1px solid #dadce0'
 const paddingDefault = '1rem'
 const badgeStyle = {
