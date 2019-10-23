@@ -43,7 +43,7 @@ const main = async () => {
     !versions ||
     timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
   ) {
-    chrome.browserAction.setBadgeText({ text: ' })
+    chrome.browserAction.setBadgeText({ text: '' })
 
     const p = [
       fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
