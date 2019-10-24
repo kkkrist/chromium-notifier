@@ -4,7 +4,7 @@ const currentVersion = window.navigator.userAgent.match(
 
 let extensions = []
 
-const getConfig = () =>
+export const getConfig = () =>
   new Promise(resolve => chrome.storage.local.get(resolve))
 
 export const getExtensionsInfo = () =>
