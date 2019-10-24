@@ -1,7 +1,90 @@
 import { h, app } from './vendor/hyperapp-2.0.2.js'
-import { getExtensionsInfo } from './background.js'
+import { Component, h as hPreact, render } from './vendor/preact-10.0.1.js'
+import htm from './vendor/htm-2.2.1.js'
+import { getConfig, getExtensionsInfo } from './background.js'
+
+const html = htm.bind(hPreact)
+
+const Header = ({ version }) => html`
+  <div class="header">
+    <div class="header-cell">
+      <p style="color: #202124; margin: 0">
+        <span style="font-weight: bold;">Chromium Update Notifications </span>
+        <code>
+          ${version && `v${version}`}
+        </code>
+      </p>
+      <span>based on </span>
+      <a href="https://chrome.woolyss.com/" target="_blank">Woolyss</a>
+    </div>
+    <div class="header-cell">
+      <a href="https://github.com/kkkrist/chromium-notifier" target="_blank">
+        <img src="../img/github.svg" style="height: 1rem; width: auto;" />
+      </a>
+    </div>
+  </div>
+`
+
+const Settings = ({ arch, tag, versions }) => html`
+  <details open="${!arch || !tag}">
+    <summary>Settings</summary>
+    <div>
+      <label>
+        <p>Platform</p>
+        <select
+          disabled="${!versions}"
+          onChange="${e =>
+            chrome.storage.local.set({
+              arch: e.target.value,
+              current: undefined,
+              tag: undefined
+            })}"
+        >
+          <option disabled="${arch}" value="">Choose platform…</option>
+          ${Object.keys(versions).map(
+            archOpt => html`
+              <option selected="${archOpt === arch}" value="${archOpt}"
+                >${archOpt}</option
+              >
+            `
+          )}
+        </select>
+      </label>
+    </div>
+  </details>
+`
+
+class App extends Component {
+  state = {
+    extensionsInfo: [],
+    versions: []
+  }
+
+  componentDidMount () {
+    getConfig().then(config => this.setState(config))
+  }
+
+  render () {
+    const { arch, extensionsInfo, tag, versions } = this.state
+    const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
+    return html`
+      <div class="row"><${Header} version="${self && self.version}" /></div>
+      <div class="row">
+        <${Settings} arch="${arch}" tag="${tag}" versions="${versions}" />
+      </div>
+    `
+  }
+}
 
 chrome.browserAction.setBadgeText({ text: '' })
+render(
+  html`
+    <${App} />
+  `,
+  document.getElementById('appPreact')
+)
+
+/* --- */
 
 const borderStyleDefault = '1px solid #dadce0'
 const paddingDefault = '1rem'
@@ -11,6 +94,11 @@ const badgeStyle = {
   color: 'white',
   padding: '0 0.25em'
 }
+
+const currentVersion = window.navigator.userAgent.match(
+  /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+)[1]
+
 const selectStyle = {
   backgroundColor: 'white',
   border: borderStyleDefault,
@@ -24,15 +112,11 @@ const selectStyle = {
 }
 
 const arch = localStorage.arch
-const currentVersion = window.navigator.userAgent.match(
-  /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-)[1]
 const error = localStorage.error
 const extensionsInfo = JSON.parse(localStorage.extensionsInfo || null)
 const extensionsTrack = localStorage.extensionsTrack === 'true'
 const timestamp = Number(localStorage.timestamp)
 const versions = JSON.parse(localStorage.versions || null)
-
 const tag =
   arch && versions[arch].find(({ tag }) => tag === localStorage.tag)
     ? localStorage.tag

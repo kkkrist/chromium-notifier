@@ -1,0 +1,56 @@
+*:disabled, .disabled {
+  opacity: 0.5;
+}
+
+a {
+  color: #3367d6;
+  text-decoration: none;
+}
+
+body {
+  color: #5f6368;
+  font-size: 13px;
+  margin: 0;
+  min-width: 360px;
+  white-space: nowrap;
+}
+
+details > div {
+  padding-top: 0.5rem;
+}
+
+label > p {
+  margin: 0.25rem 0;
+}
+
+label > select {
+  background-color: white;
+  border: 1px solid #dadce0;
+  color: #3367d6;
+  display: block;
+  font-weight: bold;
+  height: 2em;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .375rem 1.75rem .375rem .75rem;
+  width: 100%;
+}
+
+summary {
+  cursor: pointer;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -0.25rem;
+}
+
+.header-cell {
+  margin: 0 0.25rem;
+}
+
+.row {
+  border: 1px solid #dadce0;
+  padding: 1rem;
+}
+
