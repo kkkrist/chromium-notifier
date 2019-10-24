@@ -5,14 +5,54 @@ import { getConfig, getExtensionsInfo } from './background.js'
 
 const html = htm.bind(hPreact)
 
+const changeExtTracking = (e, extensionsState) => {
+  getExtensionsInfo().then(extensionsInfo => {
+    const extensionsNew =
+      extensionsInfo &&
+      !extensionsInfo.every(ext =>
+        extensionsState.find(({ version }) => version === ext.version)
+      )
+
+    chrome.storage.local.set({
+      extensionsInfo,
+      extensionsTrack: e.target.checked
+    })
+
+    if (extensionsNew) {
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: [0, 150, 180, 255]
+      })
+      chrome.browserAction.setBadgeText({ text: 'New' })
+    }
+  })
+}
+
+const changePlatform = e =>
+  chrome.storage.local.set({
+    arch: e.target.value,
+    current: undefined,
+    tag: undefined
+  })
+
+const changeTag = e => {
+  const current =
+    arch && versions[arch].find(({ tag }) => tag === e.target.value)
+
+  chrome.storage.local.set({ current, tag: e.target.value })
+
+  if (current && current.version !== currentVersion) {
+    chrome.browserAction.setBadgeText({ text: 'New' })
+  } else {
+    chrome.browserAction.setBadgeText({ text: '' })
+  }
+}
+
 const Header = ({ version }) => html`
-  <div class="header">
-    <div class="header-cell">
+  <div>
+    <div>
       <p style="color: #202124; margin: 0">
-        <span style="font-weight: bold;">Chromium Update Notifications </span>
-        <code>
-          ${version && `v${version}`}
-        </code>
+        <strong>Chromium Update Notifications </strong>
+        <code>${version && `v${version}`}</code>
       </p>
       <span>based on </span>
       <a href="https://chrome.woolyss.com/" target="_blank">Woolyss</a>
@@ -25,21 +65,19 @@ const Header = ({ version }) => html`
   </div>
 `
 
-const Settings = ({ arch, tag, versions }) => html`
+const Settings = ({
+  arch,
+  changeExtTracking,
+  extensionsTrack,
+  tag,
+  versions
+}) => html`
   <details open="${!arch || !tag}">
     <summary>Settings</summary>
     <div>
       <label>
         <p>Platform</p>
-        <select
-          disabled="${!versions}"
-          onChange="${e =>
-            chrome.storage.local.set({
-              arch: e.target.value,
-              current: undefined,
-              tag: undefined
-            })}"
-        >
+        <select disabled="${!versions}" onChange="${changePlatform}">
           <option disabled="${arch}" value="">Choose platform…</option>
           ${Object.keys(versions).map(
             archOpt => html`
@@ -50,33 +88,89 @@ const Settings = ({ arch, tag, versions }) => html`
           )}
         </select>
       </label>
+      <label>
+        <p>Tag</p>
+        <select disabled="${!arch}" onChange="${changeTag}">
+          <option disabled="${tag}" value="">Choose tag…</option>
+          ${arch &&
+            versions[arch].map(
+              tagOpts => html`
+                <option selected="${tagOpts.tag === tag}" value="${tagOpts.tag}"
+                  >${tagOpts.tag}</option
+                >
+              `
+            )}
+        </select>
+      </label>
+      <label>
+        <p style="margin: 1rem 0 0;">
+          <input
+            checked="${extensionsTrack}"
+            onChange="${changeExtTracking}"
+            style="margin: 0 0.75rem 0 0"
+            type="checkbox"
+          />
+          Track Extensions
+        </p>
+      </label>
     </div>
   </details>
 `
 
 class App extends Component {
   state = {
+    extensions: [],
     extensionsInfo: [],
     versions: []
   }
 
+  onStorageChanges = changes => {
+    this.setState(
+      Object.keys(changes).reduce(
+        (acc, key) => ({ ...acc, [key]: changes[key].newValue }),
+        {}
+      )
+    )
+  }
+
   componentDidMount () {
-    getConfig().then(config => this.setState(config))
+    getConfig().then(config => {
+      chrome.management.getAll(extensions => {
+        this.setState({ ...config, extensions })
+        chrome.browserAction.setBadgeText({ text: '' })
+      })
+    })
+    chrome.storage.onChanged.addListener(this.onStorageChanges)
+  }
+
+  componentWillUnmount () {
+    chrome.storage.onChanged.removeListener(this.onStorageChanges)
   }
 
   render () {
-    const { arch, extensionsInfo, tag, versions } = this.state
-    const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
+    const { arch, extensionsInfo, extensionsTrack, tag, versions } = this.state
+
+    //const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
+    const self = extensionsInfo.find(
+      ({ id }) => id === 'eeolemlhgopmolnadllemceajonckaha'
+    )
+
     return html`
-      <div class="row"><${Header} version="${self && self.version}" /></div>
-      <div class="row">
-        <${Settings} arch="${arch}" tag="${tag}" versions="${versions}" />
-      </div>
+      <section><${Header} version="${self && self.version}" /></section>
+      <section>
+        <${Settings}
+          arch="${arch}"
+          changeExtTracking="${e =>
+            changeExtTracking(e, this.state.extensions)}"
+          extensionsTrack="${extensionsTrack}"
+          tag="${tag}"
+          versions="${versions}"
+        />
+      </section>
     `
   }
 }
 
-chrome.browserAction.setBadgeText({ text: '' })
 render(
   html`
     <${App} />
