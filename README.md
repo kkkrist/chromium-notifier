@@ -16,7 +16,6 @@ As of version 1.4.0, all installed extensions can be enabled/disabled via a chec
 4. Enable developer mode
 5. Drag-and-drop the folder into the browser window or click on "Load unpacked extension" and select folder
 
-
 ## Configuration
 
 Click on the extension's icon, select platform (mac, win32 or win64) and tag – i.e. the Chromium version you're using and enable tracking of extension updates if desired.
