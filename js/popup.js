@@ -148,7 +148,15 @@ class App extends Component {
   }
 
   render () {
-    const { arch, extensionsInfo, extensionsTrack, tag, versions } = this.state
+    const {
+      arch,
+      error,
+      extensionsInfo,
+      extensionsTrack,
+      tag,
+      timestamp,
+      versions
+    } = this.state
 
     //const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
     const self = extensionsInfo.find(
@@ -166,6 +174,19 @@ class App extends Component {
           tag="${tag}"
           versions="${versions}"
         />
+      </section>
+      <section>
+        <small>
+          ${timestamp
+            ? `Last update: ${new Date(timestamp).toLocaleString()}`
+            : `Waiting for data…`}
+        </small>
+        ${error &&
+          html`
+            <small style="color: red; margin-top: 0.5rem;">
+              Last error: ${error}
+            </small>
+          `}
       </section>
     `
   }

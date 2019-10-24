@@ -51,6 +51,10 @@ section > div > div {
   margin: 0 0.25rem;
 }
 
+section > small {
+  display: block;
+}
+
 summary {
   cursor: pointer;
 }
