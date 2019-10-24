@@ -7,6 +7,10 @@ const currentVersion = window.navigator.userAgent.match(
 )[1]
 const html = htm.bind(h)
 
+/*
+ * Event handlers
+ */
+
 const changeExtTracking = e =>
   getExtensionsInfo().then(extensionsInfo => {
     chrome.storage.local.set({
@@ -22,6 +26,10 @@ const changePlatform = e =>
   })
 
 const changeTag = e => chrome.storage.local.set({ tag: e.target.value })
+
+/*
+ * Components
+ */
 
 const ChromiumInfo = ({ arch, current = {}, tag }) => html`
   <details open="${current.version !== currentVersion}">
@@ -217,6 +225,10 @@ const Settings = ({
     </div>
   </details>
 `
+
+/*
+ * Main app
+ */
 
 class App extends Component {
   state = {
