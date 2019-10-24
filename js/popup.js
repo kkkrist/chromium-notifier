@@ -172,8 +172,6 @@ const Header = ({ version }) => html`
 const Settings = ({
   arch,
   extensionsTrack,
-  handleChangeTag,
-  handleExtTracking,
   tag,
   versions
 }) => html`
@@ -198,7 +196,7 @@ const Settings = ({
       </label>
       <label>
         <p>Tag</p>
-        <select disabled="${!arch}" onChange="${handleChangeTag}">
+        <select disabled="${!arch}" onChange="${changeTag}">
           <option disabled="${tag}" value="">Choose tag…</option>
           ${arch &&
             versions[arch] &&
@@ -215,7 +213,7 @@ const Settings = ({
         <p style="margin: 1rem 0 0;">
           <input
             checked="${extensionsTrack}"
-            onChange="${handleExtTracking}"
+            onChange="${changeExtTracking}"
             style="margin: 0 0.75rem 0 0"
             type="checkbox"
           />
@@ -311,8 +309,6 @@ class App extends Component {
       <section>
         <${Settings}
           arch="${arch}"
-          handleChangeTag="${changeTag}"
-          handleExtTracking="${changeExtTracking}"
           extensionsTrack="${extensionsTrack}"
           tag="${tag}"
           versions="${versions}"
