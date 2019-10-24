@@ -82,6 +82,94 @@ const ChromiumInfoPreact = ({ arch, current = {}, tag }) => html`
   </details>
 `
 
+const ExtensionsInfoPreact = ({
+  disableExtension,
+  extensions,
+  extensionsInfo
+}) => {
+  const supported = extensions
+    .filter(
+      ext => extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+    )
+    .sort((a, b) => a.name.localeCompare(b.name))
+
+  const unsupported = extensions
+    .filter(ext => !supported.find(({ id }) => id === ext.id))
+    .sort((a, b) => a.name.localeCompare(b.name))
+
+  return html`
+    <details
+      open="${!extensionsInfo.every(e =>
+        extensions.find(({ version }) => version === e.version)
+      )}"
+    >
+      <summary>${extensions.length} Extensions</summary>
+      <ul>
+        ${supported.map(ext => {
+          const info =
+            extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+          return html`
+            <li style="opacity: ${ext.enabled ? '1' : '0.66'}">
+              <input
+                checked="${ext.enabled}"
+                id="${ext.id}"
+                onChange="${disableExtension}"
+                style="margin-right: 0.75em"
+                title="${ext.enabled ? 'Disable' : 'Enable'}"
+                type="checkbox"
+              />
+              ${ext.homepageUrl
+                ? html`
+                    <a href="${ext.homepageUrl}" target="_blank"
+                      ><span>${ext.name} </span>
+                    </a>
+                  `
+                : `${ext.name} `}
+              <code
+                ><span>v${ext.version} </span> ${info.version !== ext.version &&
+                  html`
+                    <a
+                      class="badge"
+                      href="${info.codebase.endsWith('crx')
+                        ? `${
+                            info.updateUrl
+                          }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
+                            info.id
+                          }%26installsource%3Dondemand%26uc`
+                        : info.codebase}"
+                      target="_blank"
+                      >v${info.version}</a
+                    >
+                  `}</code
+              >
+            </li>
+          `
+        })}
+      </ul>
+      ${unsupported.length > 0 &&
+        html`
+          <p style="margin-bottom: 0;">No update info available:</p>
+          <ul style="list-style: initial; padding: 0.5rem 0px 0px 1.25rem;">
+            ${unsupported.map(
+              ext => html`
+                <li>
+                  ${ext.homepageUrl
+                    ? html`
+                        <a href="${ext.homepageUrl}" target="_blank"
+                          ><span>${ext.name} </span>
+                        </a>
+                      `
+                    : `${ext.name} `}
+                  <code>v${ext.version}</code>
+                </li>
+              `
+            )}
+          </ul>
+        `}
+    </details>
+  `
+}
+
 const Header = ({ version }) => html`
   <div>
     <div>
@@ -190,6 +278,7 @@ class App extends Component {
     const {
       arch,
       error,
+      extensions,
       extensionsInfo,
       extensionsTrack,
       tag,
@@ -205,6 +294,15 @@ class App extends Component {
       ({ id }) => id === 'eeolemlhgopmolnadllemceajonckaha'
     )
 
+    const disableExtension = ({ target: { checked, id } }) => {
+      chrome.management.setEnabled(id, checked)
+
+      const newState = [...this.state.extensions]
+      const i = newState.findIndex(e => e.id === id)
+      newState[i].enabled = checked
+      this.setState({ extensions: newState })
+    }
+
     return html`
       <section><${Header} version="${self && self.version}" /></section>
       ${arch &&
@@ -215,6 +313,16 @@ class App extends Component {
               arch="${arch}"
               current="${current}"
               tag="${tag}"
+            />
+          </section>
+        `}
+      ${extensionsTrack &&
+        html`
+          <section>
+            <${ExtensionsInfoPreact}
+              disableExtension="${disableExtension}"
+              extensions="${extensions}"
+              extensionsInfo="${extensionsInfo}"
             />
           </section>
         `}
