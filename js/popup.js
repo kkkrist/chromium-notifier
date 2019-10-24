@@ -169,12 +169,7 @@ const Header = ({ version }) => html`
   </div>
 `
 
-const Settings = ({
-  arch,
-  extensionsTrack,
-  tag,
-  versions
-}) => html`
+const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
   <details open="${!arch || !tag}">
     <summary>Settings</summary>
     <div>
@@ -282,10 +277,7 @@ class App extends Component {
     const current =
       arch && versions[arch] && versions[arch].find(v => v.tag === tag)
 
-    //const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
-    const self = extensionsInfo.find(
-      ({ id }) => id === 'eeolemlhgopmolnadllemceajonckaha'
-    )
+    const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>
