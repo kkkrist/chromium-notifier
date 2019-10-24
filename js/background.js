@@ -106,21 +106,27 @@ chrome.storage.onChanged.addListener(async () => {
   } = await getConfig()
 
   const current = versions && arch && versions[arch].find(v => v.tag === tag)
+
   const extensionsNew =
     extensions.length > 0 &&
     !extensionsInfo.every(e =>
       extensions.find(({ version }) => version === e.version)
     )
 
+  chrome.browserAction.setBadgeBackgroundColor({
+    color: [0, 150, 180, 255]
+  })
+
+  if ((current && currentVersion !== current.version) || extensionsNew) {
+    chrome.browserAction.setBadgeText({ text: 'New' })
+  } else {
+    chrome.browserAction.setBadgeText({ text: '' })
+  }
+
   if (error) {
     console.error(error)
     chrome.browserAction.setBadgeBackgroundColor({ color: [180, 0, 20, 255] })
     chrome.browserAction.setBadgeText({ text: 'Error!' })
-  } else if ((current && currentVersion !== current.version) || extensionsNew) {
-    chrome.browserAction.setBadgeBackgroundColor({
-      color: [0, 150, 180, 255]
-    })
-    chrome.browserAction.setBadgeText({ text: 'New' })
   }
 })
 

@@ -7,27 +7,13 @@ const currentVersion = window.navigator.userAgent.match(
 )[1]
 const html = htm.bind(h)
 
-const changeExtTracking = (e, extensionsState) => {
+const changeExtTracking = e =>
   getExtensionsInfo().then(extensionsInfo => {
-    const extensionsNew =
-      extensionsInfo &&
-      !extensionsInfo.every(ext =>
-        extensionsState.find(({ version }) => version === ext.version)
-      )
-
     chrome.storage.local.set({
       extensionsInfo,
       extensionsTrack: e.target.checked
     })
-
-    if (extensionsNew) {
-      chrome.browserAction.setBadgeBackgroundColor({
-        color: [0, 150, 180, 255]
-      })
-      chrome.browserAction.setBadgeText({ text: 'New' })
-    }
   })
-}
 
 const changePlatform = e =>
   chrome.storage.local.set({
@@ -35,15 +21,7 @@ const changePlatform = e =>
     tag: null
   })
 
-const changeTag = (e, current) => {
-  chrome.storage.local.set({ tag: e.target.value })
-
-  if (current && current.version !== currentVersion) {
-    chrome.browserAction.setBadgeText({ text: 'New' })
-  } else {
-    chrome.browserAction.setBadgeText({ text: '' })
-  }
-}
+const changeTag = e => chrome.storage.local.set({ tag: e.target.value })
 
 const ChromiumInfo = ({ arch, current = {}, tag }) => html`
   <details open="${current.version !== currentVersion}">
@@ -321,9 +299,8 @@ class App extends Component {
       <section>
         <${Settings}
           arch="${arch}"
-          handleChangeTag="${e => changeTag(e, current)}"
-          handleExtTracking="${e =>
-            changeExtTracking(e, this.state.extensions)}"
+          handleChangeTag="${changeTag}"
+          handleExtTracking="${changeExtTracking}"
           extensionsTrack="${extensionsTrack}"
           tag="${tag}"
           versions="${versions}"
