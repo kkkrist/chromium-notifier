@@ -35,10 +35,7 @@ const changePlatform = e =>
     tag: null
   })
 
-const changeTag = e => {
-  const current =
-    arch && versions[arch].find(({ tag }) => tag === e.target.value)
-
+const changeTag = (e, current) => {
   chrome.storage.local.set({ tag: e.target.value })
 
   if (current && current.version !== currentVersion) {
@@ -189,6 +186,7 @@ const Header = ({ version }) => html`
 const Settings = ({
   arch,
   extensionsTrack,
+  handleChangeTag,
   handleExtTracking,
   tag,
   versions
@@ -214,7 +212,7 @@ const Settings = ({
       </label>
       <label>
         <p>Tag</p>
-        <select disabled="${!arch}" onChange="${changeTag}">
+        <select disabled="${!arch}" onChange="${handleChangeTag}">
           <option disabled="${tag}" value="">Choose tag…</option>
           ${arch &&
             versions[arch] &&
@@ -323,6 +321,7 @@ class App extends Component {
       <section>
         <${Settings}
           arch="${arch}"
+          handleChangeTag="${e => changeTag(e, current)}"
           handleExtTracking="${e =>
             changeExtTracking(e, this.state.extensions)}"
           extensionsTrack="${extensionsTrack}"
