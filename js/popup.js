@@ -30,15 +30,14 @@ const changeExtTracking = (e, extensionsState) => {
 const changePlatform = e =>
   chrome.storage.local.set({
     arch: e.target.value,
-    current: undefined,
-    tag: undefined
+    tag: null
   })
 
 const changeTag = e => {
   const current =
     arch && versions[arch].find(({ tag }) => tag === e.target.value)
 
-  chrome.storage.local.set({ current, tag: e.target.value })
+  chrome.storage.local.set({ tag: e.target.value })
 
   if (current && current.version !== currentVersion) {
     chrome.browserAction.setBadgeText({ text: 'New' })
@@ -46,6 +45,42 @@ const changeTag = e => {
     chrome.browserAction.setBadgeText({ text: '' })
   }
 }
+
+const ChromiumInfoPreact = ({ arch, current = {}, tag }) => html`
+  <details open="${current.version !== currentVersion}">
+    <summary>Chromium <code>v${currentVersion}</code></summary>
+    <ul>
+      <li>
+        <span>Current: </span>
+        <code class="${current.version !== currentVersion && 'badge'}"
+          >v${current.version}</code
+        >
+      </li>
+      <li>
+        <span>Revision: ${current.revision} </span>
+        (${new Date(current.timestamp * 1000).toLocaleString()})
+      </li>
+      ${current.links &&
+        html`
+          <li>
+            <span>Downloads: </span>
+            ${current.links.map(
+              ({ label, url }, i) => html`
+                <a href="${url}" target="_blank">${label}</a>
+                ${i + 1 < current.links.length && ', '}
+              `
+            )}
+          </li>
+        `}
+    </ul>
+    <div style="font-size: smaller; margin-top: 1em">
+      <span>Tracking </span>
+      <a href="https://chromium.woolyss.com/#${arch}-${tag}" target="_blank"
+        >${arch}-${tag}</a
+      >
+    </div>
+  </details>
+`
 
 const Header = ({ version }) => html`
   <div>
@@ -67,8 +102,8 @@ const Header = ({ version }) => html`
 
 const Settings = ({
   arch,
-  changeExtTracking,
   extensionsTrack,
+  handleExtTracking,
   tag,
   versions
 }) => html`
@@ -77,7 +112,10 @@ const Settings = ({
     <div>
       <label>
         <p>Platform</p>
-        <select disabled="${!versions}" onChange="${changePlatform}">
+        <select
+          disabled="${!Object.keys(versions).length}"
+          onChange="${changePlatform}"
+        >
           <option disabled="${arch}" value="">Choose platform…</option>
           ${Object.keys(versions).map(
             archOpt => html`
@@ -93,6 +131,7 @@ const Settings = ({
         <select disabled="${!arch}" onChange="${changeTag}">
           <option disabled="${tag}" value="">Choose tag…</option>
           ${arch &&
+            versions[arch] &&
             versions[arch].map(
               tagOpts => html`
                 <option selected="${tagOpts.tag === tag}" value="${tagOpts.tag}"
@@ -106,7 +145,7 @@ const Settings = ({
         <p style="margin: 1rem 0 0;">
           <input
             checked="${extensionsTrack}"
-            onChange="${changeExtTracking}"
+            onChange="${handleExtTracking}"
             style="margin: 0 0.75rem 0 0"
             type="checkbox"
           />
@@ -121,7 +160,7 @@ class App extends Component {
   state = {
     extensions: [],
     extensionsInfo: [],
-    versions: []
+    versions: {}
   }
 
   onStorageChanges = changes => {
@@ -158,6 +197,9 @@ class App extends Component {
       versions
     } = this.state
 
+    const current =
+      arch && versions[arch] && versions[arch].find(v => v.tag === tag)
+
     //const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
     const self = extensionsInfo.find(
       ({ id }) => id === 'eeolemlhgopmolnadllemceajonckaha'
@@ -165,10 +207,21 @@ class App extends Component {
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>
+      ${arch &&
+        tag &&
+        html`
+          <section>
+            <${ChromiumInfoPreact}
+              arch="${arch}"
+              current="${current}"
+              tag="${tag}"
+            />
+          </section>
+        `}
       <section>
         <${Settings}
           arch="${arch}"
-          changeExtTracking="${e =>
+          handleExtTracking="${e =>
             changeExtTracking(e, this.state.extensions)}"
           extensionsTrack="${extensionsTrack}"
           tag="${tag}"

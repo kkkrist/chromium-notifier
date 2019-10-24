@@ -16,6 +16,13 @@ body {
   white-space: nowrap;
 }
 
+code.badge {
+  background-color: orangered;
+  border-radius: 4px;
+  color: white;
+  padding: 0 0.25em;
+}
+
 details > div {
   padding-top: 0.5rem;
 }
@@ -57,4 +64,14 @@ section > small {
 
 summary {
   cursor: pointer;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0.5rem 0 0 0;
+}
+
+ul li {
+  padding: 0.1rem 0;
 }
