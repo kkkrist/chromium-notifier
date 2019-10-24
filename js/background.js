@@ -106,9 +106,11 @@ chrome.storage.onChanged.addListener(async () => {
   } = await getConfig()
 
   const current = versions && arch && versions[arch].find(v => v.tag === tag)
-  const extensionsNew = !extensionsInfo.every(e =>
-    extensions.find(({ version }) => version === e.version)
-  )
+  const extensionsNew =
+    extensions.length > 0 &&
+    !extensionsInfo.every(e =>
+      extensions.find(({ version }) => version === e.version)
+    )
 
   if (error) {
     console.error(error)
