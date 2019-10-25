@@ -225,6 +225,13 @@ const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
 
 class App extends Component {
   state = {
+    arch: navigator.userAgent.includes('Macintosh')
+      ? 'mac'
+      : navigator.userAgent.includes('Win64')
+      ? 'win64'
+      : navigator.userAgent.includes('Windows')
+      ? 'win32'
+      : undefined,
     extensions: [],
     extensionsInfo: [],
     versions: {}
