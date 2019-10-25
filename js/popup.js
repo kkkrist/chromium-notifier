@@ -159,7 +159,7 @@ const Header = ({ version }) => html`
         <code>${version && `v${version}`}</code>
       </p>
       <span>based on </span>
-      <a href="https://chrome.woolyss.com/" target="_blank">Woolyss</a>
+      <a href="https://chromium.woolyss.com/" target="_blank">Woolyss</a>
     </div>
     <div class="header-cell">
       <a href="https://github.com/kkkrist/chromium-notifier" target="_blank">
