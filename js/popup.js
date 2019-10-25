@@ -180,7 +180,7 @@ const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
           disabled="${!Object.keys(versions).length}"
           onChange="${changePlatform}"
         >
-          <option disabled="${arch}" value="">Choose platform…</option>
+          <option disabled="${arch && versions[arch]}" value="">Choose platform…</option>
           ${Object.keys(versions).map(
             archOpt => html`
               <option selected="${archOpt === arch}" value="${archOpt}"
@@ -192,7 +192,7 @@ const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
       </label>
       <label>
         <p>Tag</p>
-        <select disabled="${!arch}" onChange="${changeTag}">
+        <select disabled="${!arch || !versions[arch]}" onChange="${changeTag}">
           <option disabled="${tag}" value="">Choose tag…</option>
           ${arch &&
             versions[arch] &&
