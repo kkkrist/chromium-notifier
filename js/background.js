@@ -58,10 +58,10 @@ const main = async () => {
     Promise.all(p).then(
       ([versions, extensionsInfo]) => {
         chrome.storage.local.set({
-          error: null,
+          error: versions.error || null,
           extensionsInfo,
           timestamp: new Date().getTime(),
-          versions
+          versions: !versions.error ? versions : {}
         })
       },
       error => chrome.storage.local.set({ error: error.message })
