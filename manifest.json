@@ -25,5 +25,5 @@
   "name": "Chromium Update Notifications",
   "permissions": ["management", "storage"],
   "update_url": "https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/gupdate.xml",
-  "version": "1.4.1"
+  "version": "1.5.0"
 }
