@@ -107,7 +107,8 @@ const ExtensionsInfo = ({ onDisableExtension, extensions, extensionsInfo }) => {
                   `
                 : `${ext.name} `}
               <code
-                ><span>v${ext.version} </span> ${info.version !== ext.version &&
+                ><span>v${ext.version} </span> ${info.status !== 'noupdate' &&
+                  info.version !== ext.version &&
                   html`
                     <a
                       class="badge"
@@ -284,7 +285,7 @@ class App extends Component {
     const current =
       arch && versions[arch] && versions[arch].find(v => v.tag === tag)
 
-    const self = extensionsInfo.find(({ id }) => id === chrome.runtime.id)
+    const self = extensionsTrack && extensionsInfo.find(({ id }) => id === chrome.runtime.id)
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>
