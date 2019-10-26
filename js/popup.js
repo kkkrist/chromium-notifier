@@ -112,7 +112,7 @@ const ExtensionsInfo = ({ onDisableExtension, extensions, extensionsInfo }) => {
                   html`
                     <a
                       class="badge"
-                      href="${info.codebase.endsWith('crx')
+                      href="${info.codebase.includes('clients2.googleusercontent.com')
                         ? `${
                             info.updateUrl
                           }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
