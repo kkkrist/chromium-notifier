@@ -1,0 +1,77 @@
+*:disabled,
+.disabled {
+  opacity: 0.5;
+}
+
+a {
+  color: #3367d6;
+  text-decoration: none;
+}
+
+body {
+  color: #5f6368;
+  font-size: 13px;
+  margin: 0;
+  min-width: 360px;
+  white-space: nowrap;
+}
+
+details > div {
+  padding-top: 0.5rem;
+}
+
+label > p {
+  margin: 0.25rem 0;
+}
+
+label > select {
+  background-color: white;
+  border: 1px solid #dadce0;
+  color: #3367d6;
+  display: block;
+  font-weight: bold;
+  height: 2em;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+  width: 100%;
+}
+
+section {
+  border-bottom: 1px solid #dadce0;
+  padding: 1rem;
+}
+
+section > div {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -0.25rem;
+}
+
+section > div > div {
+  margin: 0 0.25rem;
+}
+
+section > small {
+  display: block;
+}
+
+summary {
+  cursor: pointer;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0.5rem 0 0 0;
+}
+
+ul li {
+  padding: 0.1rem 0;
+}
+
+.badge {
+  background-color: orangered;
+  border-radius: 4px;
+  color: white;
+  padding: 0 0.25em;
+}

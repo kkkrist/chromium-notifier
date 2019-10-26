@@ -16,9 +16,8 @@ As of version 1.4.0, all installed extensions can be enabled/disabled via a chec
 4. Enable developer mode
 5. Drag-and-drop the folder into the browser window or click on "Load unpacked extension" and select folder
 
-
 ## Configuration
 
 Click on the extension's icon, select platform (mac, win32 or win64) and tag – i.e. the Chromium version you're using and enable tracking of extension updates if desired.
 
-To enable 1-click installation of extension updates, you need to set the flag `chrome://flags/#extension-mime-request-handling` to "Always prompt for install".
+If your Chromium build contains [this patch](https://github.com/Eloston/ungoogled-chromium/blob/master/patches/extra/ungoogled-chromium/add-flag-to-configure-extension-downloading.patch), you may set the flag `chrome://flags/#extension-mime-request-handling` to "Always prompt for install" to enable 1-click installation of extension updates.
