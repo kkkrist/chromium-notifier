@@ -180,7 +180,9 @@ const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
           disabled="${!Object.keys(versions).length}"
           onChange="${changePlatform}"
         >
-          <option disabled="${arch && versions[arch]}" value="">Choose platform…</option>
+          <option disabled="${arch && versions[arch]}" value=""
+            >Choose platform…</option
+          >
           ${Object.keys(versions).map(
             archOpt => html`
               <option selected="${archOpt === arch}" value="${archOpt}"
@@ -278,7 +280,9 @@ class App extends Component {
     const current =
       arch && versions[arch] && versions[arch].find(v => v.tag === tag)
 
-    const self = extensionsTrack && extensionsInfo.find(({ id }) => id === chrome.runtime.id)
+    const self =
+      extensionsTrack &&
+      extensionsInfo.find(({ id }) => id === chrome.runtime.id)
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>
