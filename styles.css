@@ -69,6 +69,22 @@ ul li {
   padding: 0.1rem 0;
 }
 
+ul.extensions li {
+  display: flex;
+  justify-content: space-between;
+}
+
+ul.extensions li button.remove {
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  visibility: hidden;
+}
+
+ul.extensions li:hover button.remove {
+  visibility: visible;
+}
+
 .badge {
   background-color: orangered;
   border-radius: 4px;
