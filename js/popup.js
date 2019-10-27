@@ -27,6 +27,8 @@ const changePlatform = e =>
 
 const changeTag = e => chrome.storage.local.set({ tag: e.target.value })
 
+const removeExt = e => chrome.management.uninstall(e.target.id)
+
 /*
  * Components
  */
@@ -67,7 +69,7 @@ const ChromiumInfo = ({ arch, current = {}, tag }) => html`
   </details>
 `
 
-const ExtensionsInfo = ({ onDisableExtension, extensions, extensionsInfo }) => {
+const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
   const supported = extensions
     .filter(
       ext => extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
@@ -85,45 +87,54 @@ const ExtensionsInfo = ({ onDisableExtension, extensions, extensionsInfo }) => {
       )}"
     >
       <summary>${extensions.length} Extensions</summary>
-      <ul>
+      <ul class="extensions">
         ${supported.map(ext => {
           const info =
             extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
           return html`
-            <li style="opacity: ${ext.enabled ? '1' : '0.66'}">
-              <input
-                checked="${ext.enabled}"
-                id="${ext.id}"
-                onChange="${onDisableExtension}"
-                style="margin-right: 0.75em"
-                title="${ext.enabled ? 'Disable' : 'Enable'}"
-                type="checkbox"
-              />
-              ${ext.homepageUrl
-                ? html`
-                    <a href="${ext.homepageUrl}" target="_blank"
-                      ><span>${ext.name} </span>
-                    </a>
-                  `
-                : `${ext.name} `}
-              <code
-                ><span>v${ext.version} </span> ${info.status !== 'noupdate' &&
-                  info.version !== ext.version &&
-                  html`
-                    <a
-                      class="badge"
-                      href="${info.codebase.includes('clients2.googleusercontent.com')
-                        ? `${
-                            info.updateUrl
-                          }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
-                            info.id
-                          }%26installsource%3Dondemand%26uc`
-                        : info.codebase}"
-                      target="_blank"
-                      >v${info.version}</a
-                    >
-                  `}</code
-              >
+            <li>
+              <div class="${ext.enabled ? '' : ' disabled'}">
+                <input
+                  checked="${ext.enabled}"
+                  id="${ext.id}"
+                  onChange="${onDisableExtension}"
+                  style="margin-right: 0.75em"
+                  title="${ext.enabled ? 'Disable' : 'Enable'}"
+                  type="checkbox"
+                />
+                ${ext.homepageUrl
+                  ? html`
+                      <a href="${ext.homepageUrl}" target="_blank"
+                        ><span>${ext.name} </span>
+                      </a>
+                    `
+                  : `${ext.name} `}
+                <code
+                  ><span>v${ext.version} </span> ${info.status !== 'noupdate' &&
+                    info.version !== ext.version &&
+                    html`
+                      <a
+                        class="badge"
+                        href="${info.codebase.includes(
+                          'clients2.googleusercontent.com'
+                        )
+                          ? `${
+                              info.updateUrl
+                            }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
+                              info.id
+                            }%26installsource%3Dondemand%26uc`
+                          : info.codebase}"
+                        target="_blank"
+                        >v${info.version}</a
+                      >
+                    `}</code
+                >
+              </div>
+              <div>
+                <button class="remove" id="${ext.id}" onClick="${removeExt}">
+                  🗑
+                </button>
+              </div>
             </li>
           `
         })}
@@ -297,9 +308,9 @@ class App extends Component {
         html`
           <section>
             <${ExtensionsInfo}
-              onDisableExtension="${this.onDisableExtension}"
               extensions="${extensions}"
               extensionsInfo="${extensionsInfo}"
+              onDisableExtension="${this.onDisableExtension}"
             />
           </section>
         `}
