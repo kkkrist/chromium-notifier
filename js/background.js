@@ -42,6 +42,8 @@ export const getExtensionsInfo = () =>
   )
 
 const main = async () => {
+  if (!navigator.onLine) return
+
   const {
     arch,
     extensionsInfo,
