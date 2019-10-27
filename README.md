@@ -1,10 +1,8 @@
 # Chromium Update Notifications
 
-This extension will periodically check [Woolyss' website](https://chromium.woolyss.com/) and display a "New" icon badge once the version found for the selected platform/tag is different to the one you're currently using. Nothing more, nothing less.
+This extension will periodically check [Woolyss' website](https://chromium.woolyss.com/) and display a "New" icon badge once the version found for the selected platform/tag is different to the one you're currently using.
 
-As of version 1.1.0, tracking and 1-click-installing of updates for all installed extensions is also supported (those which support auto-updating). Just be aware that to make this work, a list of your installed extensions will need to be periodically transmitted to the [chromium-extension-service](https://github.com/kkkrist/chromium-extension-service).
-
-As of version 1.4.0, all installed extensions can be enabled/disabled via a checkbox next to it in the list. Quickly enable/disable extensions you rarely use to increase privacy and browser speed.
+As of version 1.1.0, version tracking and managing of all installed extensions is also supported (those which support it). Just be aware that to make this work, a list of your installed extensions will need to be periodically transmitted to the [chromium-extension-service](https://github.com/kkkrist/chromium-extension-service) (this will soon be optional).
 
 <img height="639" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/img/screenshot.webp" width="375" />
 

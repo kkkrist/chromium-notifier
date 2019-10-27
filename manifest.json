@@ -13,7 +13,7 @@
       "128": "img/icon128.png"
     }
   },
-  "description": "Checks for new versions of Chromium Update Notifications based on Woolyss' Website",
+  "description": "Chromium browser extension that provides browser and extensions update notifications and extensions management functionality. Chromium versions are synced with Woolyss' Website.",
   "icons": {
     "16": "img/icon16.png",
     "32": "img/icon32.png",
