@@ -84,30 +84,21 @@ const main = async () => {
   }
 }
 
-const runMigrations = () =>
-  new Promise(resolve => {
-    if (localStorage.length > 0) {
-      chrome.storage.local.set(
-        {
-          arch: localStorage.arch,
-          extensionsInfo: JSON.parse(localStorage.extensionsInfo || null),
-          extensionsTrack: localStorage.extensionsTrack === 'true',
-          tag: localStorage.tag,
-          timestamp: Number(localStorage.timestamp),
-          versions: JSON.parse(localStorage.versions || null)
-        },
-        () => {
-          localStorage.clear()
-          resolve()
-        }
-      )
-    } else {
-      resolve()
-    }
-  })
-
-runMigrations().then(main)
-setInterval(main, 30 * 60 * 1000)
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === 'update' && localStorage.length > 0) {
+    chrome.storage.local.set(
+      {
+        arch: localStorage.arch,
+        extensionsInfo: JSON.parse(localStorage.extensionsInfo || null),
+        extensionsTrack: localStorage.extensionsTrack === 'true',
+        tag: localStorage.tag,
+        timestamp: Number(localStorage.timestamp),
+        versions: JSON.parse(localStorage.versions || null)
+      },
+      () => localStorage.clear()
+    )
+  }
+})
 
 chrome.storage.onChanged.addListener(async () => {
   const {
@@ -145,4 +136,7 @@ chrome.storage.onChanged.addListener(async () => {
   }
 })
 
-chrome.windows.onFocusChanged.addListener(win => win > -1 && main())
+chrome.alarms.create('checkState', { periodInMinutes: 180 })
+chrome.alarms.onAlarm.addListener(main)
+
+main()
