@@ -264,10 +264,8 @@ class App extends Component {
 
   componentDidMount () {
     getConfig().then(config => {
-      chrome.management.getAll(extensions => {
-        this.setState({ ...config, extensions })
-        chrome.browserAction.setBadgeText({ text: '' })
-      })
+      chrome.browserAction.setBadgeText({ text: '' })
+      this.setState(config)
     })
     chrome.storage.onChanged.addListener(this.onStorageChanges)
   }
@@ -297,6 +295,7 @@ class App extends Component {
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>
+
       ${arch &&
         tag &&
         html`
@@ -314,6 +313,7 @@ class App extends Component {
             />
           </section>
         `}
+
       <section>
         <${Settings}
           arch="${arch}"
@@ -322,6 +322,7 @@ class App extends Component {
           versions="${versions}"
         />
       </section>
+
       <section>
         <small>
           ${timestamp
