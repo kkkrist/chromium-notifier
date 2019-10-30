@@ -6,9 +6,13 @@ const currentVersion = window.navigator.userAgent.match(
 
 let extensions = []
 
+const main = async (...args) => {
+  const now = new Date()
+  console.debug(now.toISOString(), args)
 
-const main = async () => {
   if (!navigator.onLine) return
+
+  const config = await getConfig()
 
   const {
     arch,
@@ -17,40 +21,40 @@ const main = async () => {
     tag,
     timestamp,
     versions
-  } = await getConfig()
+  } = config
 
-  if (
-    (extensionsTrack && !extensionsInfo) ||
-    !versions ||
-    timestamp + 3 * 60 * 60 * 1000 < new Date().getTime()
-  ) {
-    chrome.browserAction.setBadgeText({ text: '' })
+  console.debug('updating', config)
 
-    const p = [
-      fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
-        method: 'POST'
-      }).then(res => res.json())
-    ]
+  chrome.browserAction.setBadgeText({ text: '' })
 
-    if (extensionsTrack) {
-      p.push(getExtensionsInfo())
-    }
+  const p = [
+    fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
+      method: 'POST'
+    }).then(res => res.json())
+  ]
 
-    Promise.all(p).then(
-      ([versions, extensionsInfo]) => {
-        chrome.storage.local.set({
-          error: versions.error || null,
-          extensionsInfo,
-          timestamp: new Date().getTime(),
-          versions: !versions.error ? versions : {}
-        })
-      },
-      error => chrome.storage.local.set({ error: error.message })
-    )
+  if (extensionsTrack) {
+    p.push(getExtensionsInfo())
   }
+
+  Promise.all(p).then(
+    ([versions, extensionsInfo]) => {
+      chrome.storage.local.set({
+        error: versions.error || null,
+        extensionsInfo,
+        timestamp: now.getTime(),
+        versions: !versions.error ? versions : {}
+      })
+    },
+    error => chrome.storage.local.set({ error: error.message })
+  )
 }
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === 'install') {
+    main()
+  }
+
   if (reason === 'update' && localStorage.length > 0) {
     chrome.storage.local.set(
       {
@@ -102,7 +106,5 @@ chrome.storage.onChanged.addListener(async () => {
   }
 })
 
-chrome.alarms.create('checkState', { periodInMinutes: 180 })
 chrome.alarms.onAlarm.addListener(main)
-
-main()
+chrome.alarms.create('main', { periodInMinutes: 5 })
