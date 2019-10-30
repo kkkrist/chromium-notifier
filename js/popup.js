@@ -12,7 +12,7 @@ const html = htm.bind(h)
  */
 
 const changeExtTracking = e =>
-  getExtensionsInfo().then(extensionsInfo => {
+  getExtensionsInfo(currentVersion).then(extensionsInfo => {
     chrome.storage.local.set({
       extensionsInfo,
       extensionsTrack: e.target.checked

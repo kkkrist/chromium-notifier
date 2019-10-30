@@ -4,8 +4,6 @@ const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 
-let extensions = []
-
 const main = async (...args) => {
   const now = new Date()
   console.debug(now.toISOString(), args)
@@ -34,7 +32,7 @@ const main = async (...args) => {
   ]
 
   if (extensionsTrack) {
-    p.push(getExtensionsInfo())
+    p.push(getExtensionsInfo(currentVersion))
   }
 
   Promise.all(p).then(
@@ -74,6 +72,7 @@ chrome.storage.onChanged.addListener(async () => {
   const {
     arch,
     error,
+    extensions,
     extensionsInfo = [],
     extensionsTrack,
     tag,
