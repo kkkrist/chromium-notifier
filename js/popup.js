@@ -1,6 +1,6 @@
 import { Component, h, render } from './vendor/preact-10.0.1.js'
 import htm from './vendor/htm-2.2.1.js'
-import { getConfig, getExtensionsInfo } from './background.js'
+import { getConfig, getExtensionsInfo } from './utils.js'
 
 const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
@@ -12,7 +12,7 @@ const html = htm.bind(h)
  */
 
 const changeExtTracking = e =>
-  getExtensionsInfo().then(extensionsInfo => {
+  getExtensionsInfo(currentVersion).then(extensionsInfo => {
     chrome.storage.local.set({
       extensionsInfo,
       extensionsTrack: e.target.checked
@@ -264,10 +264,8 @@ class App extends Component {
 
   componentDidMount () {
     getConfig().then(config => {
-      chrome.management.getAll(extensions => {
-        this.setState({ ...config, extensions })
-        chrome.browserAction.setBadgeText({ text: '' })
-      })
+      chrome.browserAction.setBadgeText({ text: '' })
+      this.setState(config)
     })
     chrome.storage.onChanged.addListener(this.onStorageChanges)
   }
@@ -297,6 +295,7 @@ class App extends Component {
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>
+
       ${arch &&
         tag &&
         html`
@@ -314,6 +313,7 @@ class App extends Component {
             />
           </section>
         `}
+
       <section>
         <${Settings}
           arch="${arch}"
@@ -322,6 +322,7 @@ class App extends Component {
           versions="${versions}"
         />
       </section>
+
       <section>
         <small>
           ${timestamp

@@ -1,18 +1,18 @@
 # Chromium Update Notifications
 
-This extension will periodically check [Woolyss' website](https://chromium.woolyss.com/) and display a "New" icon badge once the version found for the selected platform/tag is different to the one you're currently using.
+This extension will periodically check [Woolyss](https://chromium.woolyss.com/) and display a "New" icon badge once the version found for the selected platform/tag is different to the one you're currently using.
 
-As of version 1.1.0, version tracking and managing of all installed extensions is also supported (of those which support it). Just be aware that to make this work, a list of your installed extensions will need to be periodically transmitted to the [chromium-extension-service](https://github.com/kkkrist/chromium-extension-service) (this will soon be optional).
+Additionally it can also track updates for and manage all installed extensions (of those which support it). Just be aware that to make this work, a list of your installed extensions will need to be periodically transmitted to the [chromium-extension-service](https://github.com/kkkrist/chromium-extension-service) (this will soon be optional).
 
 <img height="639" src="https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/img/screenshot.webp" width="375" />
 
 ## Installation
 
 1. Review source code
-2. Clone repository or download a [release](https://github.com/kkkrist/chromium-notifier/releases) and unpack into a local folder
+2. Clone repository or download a [release](https://github.com/kkkrist/chromium-notifier/releases)
 3. Navigate to [chrome://extensions](chrome://extensions)
 4. Enable developer mode
-5. Drag-and-drop the folder into the browser window or click on "Load unpacked extension" and select folder
+5. Drag-and-drop the .crx file into the browser window or click on "Load unpacked extension" and select folder
 
 ## Configuration
 
