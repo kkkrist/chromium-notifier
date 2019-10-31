@@ -106,4 +106,4 @@ chrome.storage.onChanged.addListener(async () => {
 })
 
 chrome.alarms.onAlarm.addListener(main)
-chrome.alarms.create('main', { periodInMinutes: 5 })
+chrome.alarms.create('main', { periodInMinutes: 180 })
