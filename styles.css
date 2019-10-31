@@ -89,5 +89,6 @@ ul.extensions li:hover button.remove {
   background-color: orangered;
   border-radius: 4px;
   color: white;
+  margin-right: 0.5em;
   padding: 0 0.25em;
 }

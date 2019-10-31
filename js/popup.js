@@ -142,21 +142,42 @@ const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
       ${unsupported.length > 0 &&
         html`
           <p style="margin-bottom: 0;">No update info available:</p>
-          <ul style="list-style: initial; padding: 0.5rem 0px 0px 1.25rem;">
-            ${unsupported.map(
-              ext => html`
+          <ul class="extensions">
+            ${unsupported.map(ext => {
+              const info =
+                extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+              return html`
                 <li>
-                  ${ext.homepageUrl
-                    ? html`
-                        <a href="${ext.homepageUrl}" target="_blank"
-                          ><span>${ext.name} </span>
-                        </a>
-                      `
-                    : `${ext.name} `}
-                  <code>v${ext.version}</code>
+                  <div class="${ext.enabled ? '' : ' disabled'}">
+                    <input
+                      checked="${ext.enabled}"
+                      id="${ext.id}"
+                      onChange="${onDisableExtension}"
+                      style="margin-right: 0.75em"
+                      title="${ext.enabled ? 'Disable' : 'Enable'}"
+                      type="checkbox"
+                    />
+                    ${ext.homepageUrl
+                      ? html`
+                          <a href="${ext.homepageUrl}" target="_blank"
+                            ><span>${ext.name} </span>
+                          </a>
+                        `
+                      : `${ext.name} `}
+                    <code>v${ext.version}</code>
+                  </div>
+                  <div>
+                    <button
+                      class="remove"
+                      id="${ext.id}"
+                      onClick="${removeExt}"
+                    >
+                      🗑
+                    </button>
+                  </div>
                 </li>
               `
-            )}
+            })}
           </ul>
         `}
     </details>
