@@ -10,7 +10,7 @@ Additionally it can track updates for and manage all installed extensions (those
 
 1. Review source code
 2. Clone repository or download a [.crx release](https://github.com/kkkrist/chromium-notifier/releases/latest/download/chromium-notifier.crx)
-3. Navigate to [chrome://extensions](chrome://extensions)
+3. Navigate to `chrome://extensions`
 4. Enable developer mode
 5. Drag-and-drop the .crx file into the browser window or click on "Load unpacked extension" and select folder
 
