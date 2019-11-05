@@ -44,7 +44,10 @@ const main = async (...args) => {
         versions: !versions.error ? versions : {}
       })
     },
-    error => chrome.storage.local.set({ error: error.message })
+    error => {
+      chrome.storage.local.set({ error: error.message })
+      setTimeout(main, 300 * 1000)
+    }
   )
 }
 
