@@ -22,7 +22,7 @@ If it's not possible to enable the extension and a warning tells you "This exten
 3. Enable developer mode
 4. Click on "Load unpacked extension" and select folder
 
-Please note that it's not possible to install updates via "Load unpacked extension". If you try, the new version will be installed as a separate and new extension.
+Please note that it's not possible to update via "Load unpacked extension". If you try, the new version will be installed as a separate and new extension.
 
 However, if you've cloned the repository, you can just pull the new release tag and click on the reload button under `chrome://extensions` to update seemlessly.
 
