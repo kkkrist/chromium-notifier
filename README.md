@@ -22,7 +22,7 @@ If it's not possible to enable the extension and a warning tells you "This exten
 3. Enable developer mode
 4. Click on "Load unpacked extension" and select folder
 
-Please note that it's not possible to update via "Load unpacked extension". If you try, the new version will be installed as a separate and new extension. If you've cloned the repository however, you can just pull the new release tag and click on the reload button under `chrome://extensions` to update seemlessly.
+Please note that it's not possible to update via "Load unpacked extension". If you try, the new version will be installed as a separate and new extension. If you've cloned the repository however, you can just pull the new release tag and click on the reload button in the extension's tile at `chrome://extensions` to update seemlessly.
 
 I plan to list this extension in the Chrome Web Store soon to get around this issue (see [#16](https://github.com/kkkrist/chromium-notifier/issues/16)))
 
