@@ -1,6 +1,22 @@
 import { getConfig, getExtensionsInfo } from './utils.js'
 
-const currentVersion = window.navigator.userAgent.match(
+const trackError = ({ error }) => {
+  fetch(
+    'https://chrome-extension-service-git-errorlogs.kkkrist.now.sh/api/errorlogs',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        error: JSON.stringify(error, Object.getOwnPropertyNames(error))
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    }
+  )
+}
+
+addEventListener('error', trackError)
+addEventListener('unhandledrejection', trackError)
+
+const currentVersion = navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 
