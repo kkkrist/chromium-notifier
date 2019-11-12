@@ -27,7 +27,7 @@ export const getExtensionsInfo = currentVersion =>
       )
     )
   ).then(extensions =>
-    fetch('https://chrome-extension-service.kkkrist.now.sh/api', {
+    fetch('https://chrome-extension-service-git-errorlogs.kkkrist.now.sh/api', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
