@@ -38,21 +38,40 @@ const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
 }
 
 const fetchExtensionsInfo = async (extensions, prodversion) => {
-  const jobs = extensions.reduce((acc, { id, updateUrl }) => {
-    if (updateUrl) {
-      acc[updateUrl] = addIfNew(acc[updateUrl], id)
-    }
-    return acc
-  }, {})
+  const { useProxy } = await getConfig()
 
-  const data = await Promise.all(
-    Object.keys(jobs).map(
-      updateUrl =>
-        updateUrl && fetchExtensionInfo(updateUrl, jobs[updateUrl], prodversion)
+  if (useProxy) {
+    const res = await fetch(
+      'https://chrome-extension-service-git-errorlogs.kkkrist.now.sh/api',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prodversion,
+          extensions
+        })
+      }
     )
-  )
 
-  return data.flat()
+    return await res.json()
+  } else {
+    const jobs = extensions.reduce((acc, { id, updateUrl }) => {
+      if (updateUrl) {
+        acc[updateUrl] = addIfNew(acc[updateUrl], id)
+      }
+      return acc
+    }, {})
+
+    const data = await Promise.all(
+      Object.keys(jobs).map(
+        updateUrl =>
+          updateUrl &&
+          fetchExtensionInfo(updateUrl, jobs[updateUrl], prodversion)
+      )
+    )
+
+    return data.flat()
+  }
 }
 
 export const getConfig = () =>

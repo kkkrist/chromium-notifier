@@ -1,16 +1,19 @@
 import { getConfig, getExtensionsInfo } from './utils.js'
 
-const trackError = ({ error }) => {
-  fetch(
-    'https://chrome-extension-service-git-errorlogs.kkkrist.now.sh/api/errorlogs',
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        error: JSON.stringify(error, Object.getOwnPropertyNames(error))
-      }),
-      headers: { 'Content-Type': 'application/json' }
-    }
-  )
+const trackError = async ({ error }) => {
+  const { trackError } = await getConfig()
+  if (trackError) {
+    fetch(
+      'https://chrome-extension-service-git-errorlogs.kkkrist.now.sh/api/errorlogs',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          error: JSON.stringify(error, Object.getOwnPropertyNames(error))
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
 }
 
 addEventListener('error', trackError)
@@ -93,9 +96,7 @@ chrome.storage.onChanged.addListener(async () => {
     error,
     extensions,
     extensionsInfo = [],
-    extensionsTrack,
     tag,
-    timestamp,
     versions
   } = await getConfig()
 

@@ -11,13 +11,22 @@ const html = htm.bind(h)
  * Event handlers
  */
 
-const changeExtTracking = e =>
-  getExtensionsInfo(currentVersion).then(extensionsInfo => {
-    chrome.storage.local.set({
-      extensionsInfo,
-      extensionsTrack: e.target.checked
+const changeBoolSetting = ({ target: { checked, name } }) => {
+  const newState = {
+    [name]: checked
+  }
+
+  if (name === 'extensionsTrack' && checked) {
+    getExtensionsInfo(currentVersion).then(extensionsInfo => {
+      chrome.storage.local.set({
+        ...newState,
+        extensionsInfo
+      })
     })
-  })
+  } else {
+    chrome.storage.local.set(newState)
+  }
+}
 
 const changePlatform = e =>
   chrome.storage.local.set({
@@ -202,7 +211,14 @@ const Header = ({ version }) => html`
   </div>
 `
 
-const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
+const Settings = ({
+  arch,
+  errorTracking,
+  extensionsTrack,
+  tag,
+  useProxy,
+  versions
+}) => html`
   <details open="${!arch || !tag}">
     <summary>Settings</summary>
     <div>
@@ -239,17 +255,47 @@ const Settings = ({ arch, extensionsTrack, tag, versions }) => html`
             )}
         </select>
       </label>
-      <label>
-        <p style="margin: 1rem 0 0;">
+
+      <p style="margin: 1rem 0;">
+        <label>
           <input
             checked="${extensionsTrack}"
-            onChange="${changeExtTracking}"
-            style="margin: 0 0.75rem 0 0"
+            name="extensionsTrack"
+            onChange="${changeBoolSetting}"
+            style="margin: 0 0.25rem 0 0"
             type="checkbox"
           />
-          Track Extensions
-        </p>
-      </label>
+          Track extensions
+        </label>
+
+        <label>
+          <input
+            checked="${useProxy}"
+            name="useProxy"
+            onChange="${changeBoolSetting}"
+            style="margin: 0 0.25rem 0 1rem"
+            type="checkbox"
+          />
+          Increase privacy (<a
+            href="https://github.com/kkkrist/chromium-extension-service/#version-info-for-installed-extensions"
+            target="_blank"
+            >more info</a
+          >)
+        </label>
+      </p>
+
+      <p style="margin: 0;">
+        <label>
+          <input
+            checked="${errorTracking}"
+            name="errorTracking"
+            onChange="${changeBoolSetting}"
+            style="margin: 0 0.25rem 0 0"
+            type="checkbox"
+          />
+          Track errors
+        </label>
+      </p>
     </div>
   </details>
 `
@@ -299,11 +345,13 @@ class App extends Component {
     const {
       arch,
       error,
+      errorTracking,
       extensions,
       extensionsInfo,
       extensionsTrack,
       tag,
       timestamp,
+      useProxy,
       versions
     } = this.state
 
@@ -338,8 +386,10 @@ class App extends Component {
       <section>
         <${Settings}
           arch="${arch}"
+          errorTracking="${errorTracking}"
           extensionsTrack="${extensionsTrack}"
           tag="${tag}"
+          useProxy="${useProxy}"
           versions="${versions}"
         />
       </section>
