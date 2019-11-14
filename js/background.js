@@ -53,13 +53,13 @@ const main = async (...args) => {
     p.push(getExtensionsInfo(currentVersion))
   }
 
-  const [_versions, _extensionsInfo] = await Promise.all(p)
-
-  chrome.storage.local.set({
-    error: _versions.error || null,
-    extensionsInfo: _extensionsInfo,
-    timestamp: now.getTime(),
-    versions: (_versions.error && _versions) || {}
+  Promise.all(p).then(([versions, extensionsInfo]) => {
+    chrome.storage.local.set({
+      error: versions.error || null,
+      extensionsInfo,
+      timestamp: now.getTime(),
+      versions: !versions.error ? versions : {}
+    })
   })
 }
 
