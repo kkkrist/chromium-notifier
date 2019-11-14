@@ -40,9 +40,9 @@ const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
 const fetchExtensionsInfo = async (extensions, prodversion) => {
   const { useProxy } = await getConfig()
 
-  if (useProxy) {
+  if (useProxy || useProxy === undefined) {
     const res = await fetch(
-      'https://chrome-extension-service-git-errorlogs.kkkrist.now.sh/api',
+      'https://chrome-extension-service.kkkrist.now.sh/api',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
