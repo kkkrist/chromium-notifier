@@ -268,9 +268,10 @@ const Settings = ({
           Track extensions
         </label>
 
-        <label>
+        <label class="${!extensionsTrack ? 'disabled' : ''}">
           <input
-            checked="${useProxy}"
+            checked="${useProxy || useProxy === undefined}"
+            disabled="${!extensionsTrack}"
             name="useProxy"
             onChange="${changeBoolSetting}"
             style="margin: 0 0.25rem 0 1rem"
