@@ -26,7 +26,7 @@ I plan to list this extension in the Chrome Web Store soon to get around this is
 
 ## Configuration
 
-Click on the extension's icon, select platform (mac, win32 or win64) and tag – i.e. the Chromium version you're using and enable tracking of extension updates if desired.
+Click on the extension's icon, select platform (mac, win32 or win64) and tag – i.e. the Chromium version you're using — and enable tracking of extension updates if desired.
 
 You can also enable [error tracking](https://github.com/kkkrist/chromium-extension-service#error-tracking) to help improving this extension and increase your privacy by enabling a proxy to fetch extension updates. The latter will [strip all personal and adtech-related data](https://github.com/kkkrist/chromium-extension-service#version-info-for-installed-extensions) your browser might send if it requests the data directly.
 
