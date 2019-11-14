@@ -262,11 +262,13 @@ const Settings = ({
             checked="${extensionsTrack}"
             name="extensionsTrack"
             onChange="${changeBoolSetting}"
-            style="margin: 0 0.25rem 0 0"
+            style="margin: 0.25rem 0.25rem 0 0"
             type="checkbox"
           />
           Track extension updates
         </label>
+
+        <br />
 
         <label class="${!extensionsTrack ? 'disabled' : ''}">
           <input
@@ -274,7 +276,7 @@ const Settings = ({
             disabled="${!extensionsTrack}"
             name="useProxy"
             onChange="${changeBoolSetting}"
-            style="margin: 0 0.25rem 0 1rem"
+            style="margin: 0 0.25rem 0 0"
             type="checkbox"
           />
           Increase privacy (<a
