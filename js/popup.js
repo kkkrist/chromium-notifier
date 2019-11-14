@@ -265,7 +265,7 @@ const Settings = ({
             style="margin: 0 0.25rem 0 0"
             type="checkbox"
           />
-          Track extensions
+          Track extension updates
         </label>
 
         <label class="${!extensionsTrack ? 'disabled' : ''}">
@@ -294,7 +294,7 @@ const Settings = ({
             style="margin: 0 0.25rem 0 0"
             type="checkbox"
           />
-          Track errors
+          Enable error tracking
         </label>
       </p>
     </div>
