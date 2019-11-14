@@ -288,7 +288,7 @@ const Settings = ({
       <p style="margin: 0;">
         <label>
           <input
-            checked="${errorTracking}"
+            checked="${errorTracking || errorTracking === undefined}"
             name="errorTracking"
             onChange="${changeBoolSetting}"
             style="margin: 0 0.25rem 0 0"

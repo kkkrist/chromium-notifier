@@ -4,7 +4,7 @@ const trackError = async ({ error }) => {
   chrome.storage.local.set({ error: error.message })
 
   const { trackError } = await getConfig()
-  if (trackError) {
+  if (trackError || trackError === undefined) {
     fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
       method: 'POST',
       body: JSON.stringify({
