@@ -1,6 +1,24 @@
 import { getConfig, getExtensionsInfo } from './utils.js'
 
-const currentVersion = window.navigator.userAgent.match(
+const trackError = async ({ error }) => {
+  chrome.storage.local.set({ error: error.message })
+
+  const { trackError } = await getConfig()
+  if (trackError || trackError === undefined) {
+    fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
+      method: 'POST',
+      body: JSON.stringify({
+        error: JSON.stringify(error, Object.getOwnPropertyNames(error))
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+addEventListener('error', trackError)
+addEventListener('unhandledrejection', trackError)
+
+const currentVersion = navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 )[1]
 
@@ -35,20 +53,14 @@ const main = async (...args) => {
     p.push(getExtensionsInfo(currentVersion))
   }
 
-  Promise.all(p).then(
-    ([versions, extensionsInfo]) => {
-      chrome.storage.local.set({
-        error: versions.error || null,
-        extensionsInfo,
-        timestamp: now.getTime(),
-        versions: !versions.error ? versions : {}
-      })
-    },
-    error => {
-      chrome.storage.local.set({ error: error.message })
-      setTimeout(main, 300 * 1000)
-    }
-  )
+  Promise.all(p).then(([versions, extensionsInfo]) => {
+    chrome.storage.local.set({
+      error: versions.error || null,
+      extensionsInfo,
+      timestamp: now.getTime(),
+      versions: !versions.error ? versions : {}
+    })
+  })
 }
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
@@ -77,9 +89,7 @@ chrome.storage.onChanged.addListener(async () => {
     error,
     extensions,
     extensionsInfo = [],
-    extensionsTrack,
     tag,
-    timestamp,
     versions
   } = await getConfig()
 

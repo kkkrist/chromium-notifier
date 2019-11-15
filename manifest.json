@@ -23,7 +23,7 @@
   "homepage_url": "https://github.com/kkkrist/chromium-notifier",
   "manifest_version": 2,
   "name": "Chromium Update Notifications",
-  "permissions": ["alarms", "management", "storage"],
+  "permissions": ["alarms", "management", "storage", "https://clients2.google.com/service/*"],
   "update_url": "https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/gupdate.xml",
   "version": "1.6.4"
 }
