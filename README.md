@@ -22,7 +22,7 @@ If it's not possible to enable the extension and a warning tells you "This exten
 
 Please note that it's not possible to update via "Load unpacked extension". Every extension installed via this method will be installed as a separate and new extension, regardless of previously installed versions. If you've cloned the repository however, you can just git-pull the new release tag and click on the reload button in the extension's tile at `chrome://extensions` to update seamlessly.
 
-I plan to list this extension in the Chrome Web Store soon to get around this issue (see [#14](https://github.com/kkkrist/chromium-notifier/issues/14)))
+I plan to list this extension in the Chrome Web Store soon to get around this issue (see [#14](https://github.com/kkkrist/chromium-notifier/issues/14))
 
 ## Configuration
 
