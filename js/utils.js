@@ -3,6 +3,9 @@ const parser = new DOMParser()
 const addIfNew = (arr = [], item) =>
   item === undefined ? arr : [...new Set([...arr]).add(item)]
 
+const getSelf = () =>
+  new Promise(resolve => chrome.management.get(chrome.runtime.id, resolve))
+
 const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
   const x = ids.map(id => `x=${encodeURIComponent(`id=${id}&uc`)}`)
 
@@ -39,10 +42,12 @@ const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
 
 const fetchExtensionsInfo = async (extensions, prodversion) => {
   const { useProxy } = await getConfig()
+  const self = await getSelf()
 
   if (useProxy || useProxy === undefined) {
     const res = await fetch(
-      'https://chrome-extension-service.kkkrist.now.sh/api',
+      `https://chrome-extension-service.kkkrist.now.sh/api?pluginVersion=${self &&
+        self.version}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
