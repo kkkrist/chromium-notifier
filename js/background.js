@@ -6,17 +6,14 @@ const trackError = async ({ error }) => {
   const { trackError } = await getConfig()
   if (trackError || trackError === undefined) {
     const self = await getSelf()
-    fetch(
-      'https://chrome-extension-service.kkkrist.now.sh/api/errorlogs',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-          pluginVersion: self && self.version
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
+    fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
+      method: 'POST',
+      body: JSON.stringify({
+        error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+        pluginVersion: self && self.version
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    })
   }
 }
 
@@ -28,12 +25,16 @@ const currentVersion = navigator.userAgent.match(
 )[1]
 
 const main = async (...args) => {
+  const config = await getConfig()
   const now = new Date()
+
   console.debug(now.toISOString(), args)
 
-  if (!navigator.onLine) return
-
-  const config = await getConfig()
+  if (!navigator.onLine) {
+    return console.debug(`We're not online, aborting.`, config)
+  } else {
+    console.debug('updating', config)
+  }
 
   const {
     arch,
@@ -43,8 +44,6 @@ const main = async (...args) => {
     timestamp,
     versions
   } = config
-
-  console.debug('updating', config)
 
   chrome.browserAction.setBadgeText({ text: '' })
 
