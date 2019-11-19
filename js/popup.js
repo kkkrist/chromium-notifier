@@ -311,6 +311,7 @@ class App extends Component {
   state = {
     extensions: [],
     extensionsInfo: [],
+    self: {},
     versions: {}
   }
 
@@ -352,6 +353,7 @@ class App extends Component {
       extensions,
       extensionsInfo,
       extensionsTrack,
+      self,
       tag,
       timestamp,
       useProxy,
@@ -360,10 +362,6 @@ class App extends Component {
 
     const current =
       arch && versions[arch] && versions[arch].find(v => v.tag === tag)
-
-    const self =
-      extensionsTrack &&
-      extensionsInfo.find(({ id }) => id === chrome.runtime.id)
 
     return html`
       <section><${Header} version="${self && self.version}" /></section>

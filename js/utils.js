@@ -92,7 +92,7 @@ export const getConfig = () =>
             ? 'win32'
             : undefined
         }
-        resolve({ ...store, extensions })
+        getSelf().then(self => resolve({ ...store, self, extensions }))
       })
     )
   )
