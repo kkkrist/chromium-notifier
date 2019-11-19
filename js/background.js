@@ -1,17 +1,22 @@
-import { getConfig, getExtensionsInfo } from './utils.js'
+import { getConfig, getExtensionsInfo, getSelf } from './utils.js'
 
 const trackError = async ({ error }) => {
   chrome.storage.local.set({ error: error.message })
 
   const { trackError } = await getConfig()
   if (trackError || trackError === undefined) {
-    fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
-      method: 'POST',
-      body: JSON.stringify({
-        error: JSON.stringify(error, Object.getOwnPropertyNames(error))
-      }),
-      headers: { 'Content-Type': 'application/json' }
-    })
+    const self = await getSelf()
+    fetch(
+      'https://chrome-extension-service.kkkrist.now.sh/api/errorlogs',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+          pluginVersion: self && self.version
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
   }
 }
 

@@ -3,7 +3,7 @@ const parser = new DOMParser()
 const addIfNew = (arr = [], item) =>
   item === undefined ? arr : [...new Set([...arr]).add(item)]
 
-const getSelf = () =>
+export const getSelf = () =>
   new Promise(resolve => chrome.management.get(chrome.runtime.id, resolve))
 
 const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
