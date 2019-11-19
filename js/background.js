@@ -1,24 +1,43 @@
 import { getConfig, getExtensionsInfo, getSelf } from './utils.js'
 
-const trackError = async ({ error }) => {
-  chrome.storage.local.set({ error: error.message })
+const trackError = async e => {
+  console.error(e.error || e.reason)
 
-  const { trackError } = await getConfig()
-  if (trackError || trackError === undefined) {
+  try {
     const self = await getSelf()
-    fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
-      method: 'POST',
-      body: JSON.stringify({
-        error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-        pluginVersion: self && self.version
-      }),
-      headers: { 'Content-Type': 'application/json' }
+    const { errorTracking } = await getConfig()
+
+    chrome.storage.local.set({
+      error: (e.error && e.error.message) || e.reason
     })
+
+    if (errorTracking || errorTracking === undefined) {
+      fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
+        method: 'POST',
+        body: JSON.stringify({
+          error: JSON.stringify(
+            e.error || e.reason,
+            Object.getOwnPropertyNames(e.error || e.reason)
+          ),
+          pluginVersion: self && self.version
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+  } catch (error) {
+    console.error(`Error while error tracking, d'oh!`, error)
   }
 }
 
-addEventListener('error', trackError)
-addEventListener('unhandledrejection', trackError)
+window.onerror = e => {
+  trackError(e)
+  return false
+}
+
+window.onunhandledrejection = e => {
+  trackError(e)
+  return false
+}
 
 const currentVersion = navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
