@@ -116,10 +116,12 @@ chrome.storage.onChanged.addListener(async () => {
     versions
   } = await getConfig()
 
-  const current = versions && arch && versions[arch].find(v => v.tag === tag)
+  const current =
+    arch && versions[arch] && versions[arch].find(v => v.tag === tag)
 
   const extensionsNew =
     extensions.length > 0 &&
+    extensionsInfo &&
     !extensionsInfo.every(e =>
       extensions.find(({ version }) => version === e.version)
     )
