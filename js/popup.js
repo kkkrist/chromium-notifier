@@ -81,7 +81,9 @@ const ChromiumInfo = ({ arch, current = {}, tag }) => html`
 const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
   const supported = extensions
     .filter(
-      ext => extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+      ext =>
+        extensionsInfo &&
+        extensionsInfo.find(({ id, version }) => id === ext.id && version)
     )
     .sort((a, b) => a.name.localeCompare(b.name))
 
