@@ -113,7 +113,7 @@ export const getExtensionsInfo = currentVersion =>
   ).then(extensions => fetchExtensionsInfo(extensions, currentVersion))
 
 export const trackError = async e => {
-  console.error(e)
+  console.error(e.reason || e.error || e)
   const message =
     (e.reason && e.reason.toString()) || e.stack || e.message || 'Unknown'
 
