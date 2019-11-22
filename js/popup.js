@@ -357,8 +357,9 @@ class App extends Component {
     chrome.storage.onChanged.removeListener(this.onStorageChanges)
   }
 
-  render () {
-    const {
+  render (
+    props,
+    {
       arch,
       error,
       errorTracking,
@@ -370,8 +371,8 @@ class App extends Component {
       timestamp,
       useProxy,
       versions
-    } = this.state
-
+    }
+  ) {
     const current =
       arch && versions[arch] && versions[arch].find(v => v.tag === tag)
 
