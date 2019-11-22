@@ -1,6 +1,16 @@
 import { Component, h, render } from './vendor/preact-10.0.1.js'
 import htm from './vendor/htm-2.2.1.js'
-import { getConfig, getExtensionsInfo } from './utils.js'
+import { getConfig, getExtensionsInfo, trackError } from './utils.js'
+
+window.onerror = e => {
+  trackError(e)
+  return false
+}
+
+window.onunhandledrejection = e => {
+  trackError(e)
+  return false
+}
 
 const currentVersion = window.navigator.userAgent.match(
   /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/

@@ -1,33 +1,4 @@
-import { getConfig, getExtensionsInfo, getSelf } from './utils.js'
-
-const trackError = async e => {
-  console.error(e.error || e.reason)
-
-  try {
-    const self = await getSelf()
-    const { errorTracking } = await getConfig()
-
-    chrome.storage.local.set({
-      error: (e.error && e.error.message) || e.reason
-    })
-
-    if (errorTracking || errorTracking === undefined) {
-      fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
-        method: 'POST',
-        body: JSON.stringify({
-          error: JSON.stringify(
-            e.error || e.reason,
-            Object.getOwnPropertyNames(e.error || e.reason)
-          ),
-          pluginVersion: self && self.version
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
-  } catch (error) {
-    console.error(`Error while error tracking, d'oh!`, error)
-  }
-}
+import { getConfig, getExtensionsInfo, trackError } from './utils.js'
 
 window.onerror = e => {
   trackError(e)
