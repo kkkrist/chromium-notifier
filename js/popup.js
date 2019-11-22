@@ -223,6 +223,26 @@ const Header = ({ version }) => html`
   </div>
 `
 
+class Section extends Component {
+  state = { errorMsg: null }
+
+  componentDidCatch (error) {
+    this.setState({ errorMsg: error.message })
+  }
+
+  render ({ children }, { errorMsg }) {
+    return html`
+      <section>
+        ${errorMsg
+          ? html`
+              <small style="color: red">${errorMsg}</small>
+            `
+          : children}
+      </section>
+    `
+  }
+}
+
 const Settings = ({
   arch,
   errorTracking,
@@ -377,27 +397,27 @@ class App extends Component {
       arch && versions[arch] && versions[arch].find(v => v.tag === tag)
 
     return html`
-      <section><${Header} version="${self && self.version}" /></section>
+      <${Section}><${Header} version="${self && self.version}"/><//>
 
       ${arch &&
         tag &&
         html`
-          <section>
+          <${Section}>
             <${ChromiumInfo} arch="${arch}" current="${current}" tag="${tag}" />
-          </section>
+          <//>
         `}
       ${extensionsTrack &&
         html`
-          <section>
+          <${Section}>
             <${ExtensionsInfo}
               extensions="${extensions}"
               extensionsInfo="${extensionsInfo}"
               onDisableExtension="${this.onDisableExtension}"
             />
-          </section>
+          <//>
         `}
 
-      <section>
+      <${Section}>
         <${Settings}
           arch="${arch}"
           errorTracking="${errorTracking}"
@@ -406,9 +426,9 @@ class App extends Component {
           useProxy="${useProxy}"
           versions="${versions}"
         />
-      </section>
+      <//>
 
-      <section>
+      <${Section}>
         <small>
           ${timestamp
             ? `Last update: ${new Date(timestamp).toLocaleString()}`
@@ -420,7 +440,7 @@ class App extends Component {
               Last error: ${error}
             </small>
           `}
-      </section>
+      <//>
     `
   }
 }
