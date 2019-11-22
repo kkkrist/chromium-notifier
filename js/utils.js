@@ -110,25 +110,23 @@ export const getExtensionsInfo = currentVersion =>
   ).then(extensions => fetchExtensionsInfo(extensions, currentVersion))
 
 export const trackError = async e => {
-  console.error(e.reason || e.message || e.error.message)
+  console.error(e)
+  const message =
+    (e.reason && e.reason.toString()) || e.stack || e.message || 'Unknown'
 
   try {
     const self = await getSelf()
     const { errorTracking } = await getConfig()
 
-    debugger
     chrome.storage.local.set({
-      error: e.reason || e.message || e.error.message
+      error: message
     })
 
     if (errorTracking || errorTracking === undefined) {
       fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
         method: 'POST',
         body: JSON.stringify({
-          error: e.reason || JSON.stringify(
-            e.message ? e : e.error,
-            Object.getOwnPropertyNames(e.reason || e.message ? e : e.error)
-          ),
+          error: message,
           pluginVersion: self && self.version
         }),
         headers: { 'Content-Type': 'application/json' }
