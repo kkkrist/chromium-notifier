@@ -67,7 +67,7 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
       return acc
     }, {})
 
-    const data = await Promise.all(
+    const results = await Promise.allSettled(
       Object.keys(jobs).map(
         updateUrl =>
           updateUrl &&
@@ -75,7 +75,10 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
       )
     )
 
-    return data.flat()
+    return results
+      .filter(({ status }) => status === 'fulfilled')
+      .map(({ value }) => value)
+      .flat()
   }
 }
 
