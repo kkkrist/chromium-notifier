@@ -1,4 +1,9 @@
-import { getConfig, getExtensionsInfo, trackError } from './utils.js'
+import {
+  clearError,
+  getConfig,
+  getExtensionsInfo,
+  trackError
+} from './utils.js'
 
 window.onerror = e => {
   trackError(e)
@@ -35,7 +40,7 @@ const main = async (...args) => {
     versions
   } = config
 
-  chrome.browserAction.setBadgeText({ text: '' })
+  await clearError()
 
   const p = [
     fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
@@ -97,15 +102,12 @@ chrome.storage.onChanged.addListener(async () => {
       extensions.find(({ version }) => version === e.version)
     )
 
-  chrome.browserAction.setBadgeBackgroundColor({
-    color: [0, 150, 180, 255]
+  chrome.browserAction.setBadgeText({
+    text:
+      (current && currentVersion !== current.version) || extensionsNew
+        ? 'New'
+        : ''
   })
-
-  if ((current && currentVersion !== current.version) || extensionsNew) {
-    chrome.browserAction.setBadgeText({ text: 'New' })
-  } else {
-    chrome.browserAction.setBadgeText({ text: '' })
-  }
 
   if (error) {
     console.error(error)
