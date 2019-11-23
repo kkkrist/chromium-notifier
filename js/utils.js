@@ -56,7 +56,7 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
 
   if (useProxy || useProxy === undefined) {
     const res = await fetch(
-      `https://chrome-extension-service.kkkrist.now.sh/api?pluginVersion=${self &&
+      `https://chrome-extension-service-git-all-settled.kkkrist.now.sh/api?pluginVersion=${self &&
         self.version}`,
       {
         method: 'POST',
