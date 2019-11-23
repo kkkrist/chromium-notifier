@@ -1,6 +1,11 @@
 import { Component, h, render } from './vendor/preact-10.0.1.js'
 import htm from './vendor/htm-2.2.1.js'
-import { getConfig, getExtensionsInfo, trackError } from './utils.js'
+import {
+  clearError,
+  getConfig,
+  getExtensionsInfo,
+  trackError
+} from './utils.js'
 
 window.onerror = e => {
   trackError(e)
@@ -103,7 +108,7 @@ const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
 
   return html`
     <details
-      open="${!extensionsInfo.every(e =>
+      open="${extensionsInfo && !extensionsInfo.every(e =>
         extensions.find(({ version }) => version === e.version)
       )}"
     >
@@ -365,11 +370,10 @@ class App extends Component {
     )
   }
 
-  componentDidMount () {
-    getConfig().then(config => {
-      chrome.browserAction.setBadgeText({ text: '' })
-      this.setState(config)
-    })
+  async componentDidMount () {
+    await clearError()
+    const config = await getConfig()
+    this.setState(config)
     chrome.storage.onChanged.addListener(this.onStorageChanges)
   }
 
