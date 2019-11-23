@@ -3,6 +3,16 @@ const parser = new DOMParser()
 const addIfNew = (arr = [], item) =>
   item === undefined ? arr : [...new Set([...arr]).add(item)]
 
+export const clearError = () =>
+  new Promise(resolve =>
+    chrome.browserAction.setBadgeText({ text: '' }, () =>
+      chrome.browserAction.setBadgeBackgroundColor(
+        { color: [0, 150, 180, 255] },
+        () => chrome.storage.local.set({ error: null }, () => resolve())
+      )
+    )
+  )
+
 export const getSelf = () =>
   new Promise(resolve => chrome.management.get(chrome.runtime.id, resolve))
 
@@ -100,8 +110,9 @@ export const getConfig = () =>
     )
   )
 
-export const getExtensionsInfo = currentVersion =>
-  new Promise(resolve =>
+export const getExtensionsInfo = async currentVersion => {
+  await clearError()
+  const extensions = await new Promise(resolve =>
     chrome.management.getAll(exts =>
       resolve(
         exts.map(ext => ({
@@ -110,7 +121,10 @@ export const getExtensionsInfo = currentVersion =>
         }))
       )
     )
-  ).then(extensions => fetchExtensionsInfo(extensions, currentVersion))
+  )
+
+  return await fetchExtensionsInfo(extensions, currentVersion)
+}
 
 export const trackError = async e => {
   console.error(e.reason || e.error || e)
