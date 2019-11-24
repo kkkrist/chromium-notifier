@@ -32,12 +32,13 @@ const changeBoolSetting = ({ target: { checked, name } }) => {
   }
 
   if (name === 'extensionsTrack' && checked) {
-    getExtensionsInfo(currentVersion).then(extensionsInfo => {
-      chrome.storage.local.set({
-        ...newState,
-        extensionsInfo
+    getExtensionsInfo(currentVersion)
+      .then(extensionsInfo => {
+        newState.extensionsInfo = extensionsInfo
       })
-    })
+      .finally(() => {
+        chrome.storage.local.set(newState)
+      })
   } else {
     chrome.storage.local.set(newState)
   }
@@ -93,12 +94,14 @@ const ChromiumInfo = ({ arch, current = {}, tag }) => html`
   </details>
 `
 
-const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
+const ExtensionsInfo = ({
+  extensions = [],
+  extensionsInfo = [],
+  onDisableExtension
+}) => {
   const supported = extensions
-    .filter(
-      ext =>
-        extensionsInfo &&
-        extensionsInfo.find(({ id, version }) => id === ext.id && version)
+    .filter(ext =>
+      extensionsInfo.find(({ id, version }) => id === ext.id && version)
     )
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -108,15 +111,14 @@ const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
 
   return html`
     <details
-      open="${extensionsInfo && !extensionsInfo.every(e =>
+      open="${!extensionsInfo.every(e =>
         extensions.find(({ version }) => version === e.version)
       )}"
     >
       <summary>${extensions.length} Extensions</summary>
       <ul class="extensions">
         ${supported.map(ext => {
-          const info =
-            extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+          const info = extensionsInfo.find(({ id }) => id === ext.id)
           return html`
             <li>
               <div class="${ext.enabled ? '' : ' disabled'}">
@@ -170,8 +172,7 @@ const ExtensionsInfo = ({ extensions, extensionsInfo, onDisableExtension }) => {
           <p style="margin-bottom: 0;">No update info available:</p>
           <ul class="extensions">
             ${unsupported.map(ext => {
-              const info =
-                extensionsInfo && extensionsInfo.find(({ id }) => id === ext.id)
+              const info = extensionsInfo.find(({ id }) => id === ext.id)
               return html`
                 <li>
                   <div class="${ext.enabled ? '' : ' disabled'}">
