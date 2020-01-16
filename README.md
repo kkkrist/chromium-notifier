@@ -13,7 +13,7 @@ This extension will periodically check [Woolyss](https://chromium.woolyss.com/) 
 
 ### Installing via "Load unpacked extension"
 
-If it's not possible to enable the extension and a warning tells you "This extension is not listed in the Chrome Web Store and may have been added without your knowledge", try the following:
+If it's not possible to enable the extension and a warning tells you "This extension is not listed in the Chrome Web Store and may have been added without your knowledge" or "crx required proof missing", try the following:
 
 1. Download and unpack the source code from [the latest release](https://github.com/kkkrist/chromium-notifier/releases/latest) or git-clone the master branch of this repository into a local folder
 2. Navigate to `chrome://extensions`
