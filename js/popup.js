@@ -146,11 +146,7 @@ const ExtensionsInfo = ({
                         href="${info.codebase.includes(
                           'clients2.googleusercontent.com'
                         )
-                          ? `${
-                              info.updateUrl
-                            }?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${
-                              info.id
-                            }%26installsource%3Dondemand%26uc`
+                          ? `${info.updateUrl}?response=redirect&acceptformat=crx2,crx3&prodversion=${currentVersion}&x=id%3D${info.id}%26installsource%3Dondemand%26uc`
                           : info.codebase}"
                         target="_blank"
                         >v${info.version}</a
