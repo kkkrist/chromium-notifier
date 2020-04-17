@@ -45,7 +45,22 @@ const main = async (...args) => {
   const p = [
     fetch('https://chromium.woolyss.com/api/v4/?app=MTkxMDA5', {
       method: 'POST'
-    }).then(res => res.json())
+    })
+      .then(res => res.text())
+      .then(text => {
+        try {
+          const json = JSON.parse(text)
+          return json
+        } catch (error) {
+          throw new Error(
+            `${error.message} (Woolyss API): ${
+              text.length > 60
+                ? text.slice(0, 30) + '…' + text.slice(text.length - 30)
+                : text
+            }`
+          )
+        }
+      })
   ]
 
   if (extensionsTrack) {

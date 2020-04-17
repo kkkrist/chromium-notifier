@@ -68,7 +68,20 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
       }
     )
 
-    return await res.json()
+    const text = await res.text()
+
+    try {
+      const json = JSON.parse(text)
+      return json
+    } catch (error) {
+      throw new Error(
+        `${error.message} (proxy API): ${
+          text.length > 60
+            ? text.slice(0, 30) + '…' + text.slice(text.length - 30)
+            : text
+        }`
+      )
+    }
   } else {
     const jobs = extensions.reduce((acc, { id, updateUrl }) => {
       if (updateUrl) {
