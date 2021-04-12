@@ -56,7 +56,7 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
 
   if (useProxy || useProxy === undefined) {
     const res = await fetch(
-      `https://chrome-extension-service.kkkrist.now.sh/api?pluginVersion=${self &&
+      `https://chrome-extension-service-kkkrist.vercel.app/api?pluginVersion=${self &&
         self.version}`,
       {
         method: 'POST',
@@ -153,7 +153,7 @@ export const trackError = async e => {
     })
 
     if (errorTracking || errorTracking === undefined) {
-      fetch('https://chrome-extension-service.kkkrist.now.sh/api/errorlogs', {
+      fetch('https://chrome-extension-service-kkkrist.vercel.app/api/errorlogs', {
         method: 'POST',
         body: JSON.stringify({
           error: message,
