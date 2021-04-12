@@ -17,10 +17,10 @@ export const getSelf = () =>
   new Promise(resolve => chrome.management.get(chrome.runtime.id, resolve))
 
 const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
-  const x = ids.map(id => `x=${encodeURIComponent(`id=${id}&uc`)}`)
+  const x = ids.map(id => `x=${encodeURIComponent(`id=${id}&uc`)}`).join('&')
 
   const txt = await fetch(
-    `${updateUrl}?${x.join('&')}&prodversion=${prodversion}`
+    `${updateUrl}?acceptformat=crx2,crx3&prodversion=${prodversion}&${x}`
   ).then(req => req.text())
 
   const xml = parser.parseFromString(txt, 'text/xml')
