@@ -1,5 +1,3 @@
-**Note:** This extension is currently not working properly due to API changes on Google's part. See [#34](https://github.com/kkkrist/chromium-notifier/issues/34) for details
-
 # Chromium Update Notifications
 
 This extension will periodically check [Woolyss](https://chromium.woolyss.com/) and display a "New" icon badge once the version found for the selected platform/tag is different to the one you're currently using. Additionally it can track updates for and manage all installed extensions (those supporting it).
