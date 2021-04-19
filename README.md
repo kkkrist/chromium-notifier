@@ -26,7 +26,7 @@ Please note that it's not possible to update via "Load unpacked extension". Ever
 
 ## Configuration
 
-Click on the extension's icon, select platform (mac, win32 or win64) and tag – i.e. the Chromium version you're using – and enable tracking of extension updates if desired.
+Click on the extension's icon, select platform (mac, win64 etc.) and tag – i.e. the Chromium version you're using – and enable tracking of extension updates if desired.
 
 You can also enable [error tracking](https://github.com/kkkrist/chromium-extension-service#error-tracking) to help improving this extension and increase your privacy by enabling a proxy to fetch extension updates. The latter will [strip all personal and adtech-related data](https://github.com/kkkrist/chromium-extension-service#version-info-for-installed-extensions) your browser might send if it requests the data directly (this was always enabled in versions prior to 1.7.0, now it's optional). I use a [public Now deployment](https://chrome-extension-service-kkkrist.vercel.app/_src) to host the proxy, so you can review all of the actual source code used to run it.
 
