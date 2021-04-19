@@ -1,10 +1,9 @@
 {
   "author": "Christian Mund <opensource@mundpropaganda.net>",
   "background": {
-    "page": "background.html",
-    "persistent": true
+    "service_worker": "js/background.js"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "img/icon16.png",
@@ -21,9 +20,10 @@
     "128": "img/icon128.png"
   },
   "homepage_url": "https://github.com/kkkrist/chromium-notifier",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Chromium Update Notifications",
-  "permissions": ["alarms", "management", "storage", "*://clients2.google.com/service/*"],
+  "permissions": ["alarms", "management", "storage"],
+  "host_permissions": ["*://clients2.google.com/service/*"],
   "update_url": "https://raw.githubusercontent.com/kkkrist/chromium-notifier/master/gupdate.xml",
   "version": "1.8.4"
 }

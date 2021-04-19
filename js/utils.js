@@ -5,8 +5,8 @@ const addIfNew = (arr = [], item) =>
 
 export const clearError = () =>
   new Promise(resolve =>
-    chrome.browserAction.setBadgeText({ text: '' }, () =>
-      chrome.browserAction.setBadgeBackgroundColor(
+    chrome.action.setBadgeText({ text: '' }, () =>
+      chrome.action.setBadgeBackgroundColor(
         { color: [0, 150, 180, 255] },
         () => chrome.storage.local.set({ error: null }, () => resolve())
       )
