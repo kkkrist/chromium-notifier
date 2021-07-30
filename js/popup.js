@@ -4,6 +4,7 @@ import {
   clearError,
   getConfig,
   getExtensionsInfo,
+  getUserAgentData,
   trackError
 } from './utils.js'
 
@@ -29,8 +30,7 @@ const changeBoolSetting = ({ target: { checked, name } }) => {
   }
 
   if (name === 'extensionsTrack' && checked) {
-    navigator.userAgentData
-      .getHighEntropyValues(['uaFullVersion'])
+    getUserAgentData()
       .then(({ uaFullVersion }) => getExtensionsInfo(uaFullVersion))
       .then(extensionsInfo => {
         newState.extensionsInfo = extensionsInfo

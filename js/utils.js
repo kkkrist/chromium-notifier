@@ -105,31 +105,53 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
   }
 }
 
+export const getUserAgentData = async () => {
+  if (navigator.userAgentData) {
+    const data = await navigator.userAgentData.getHighEntropyValues([
+      'platform',
+      'uaFullVersion'
+    ])
+    return data
+  }
+
+  const uaFullVersion = navigator.userAgent.match(
+    /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+  )[1]
+
+  const platform = navigator.userAgent.includes('Macintosh')
+    ? 'macOS'
+    : navigator.userAgent.includes('Win64')
+    ? 'Windows'
+    : navigator.userAgent.includes('Windows')
+    ? 'Windows'
+    : undefined
+
+  return { platform, uaFullVersion }
+}
+
 export const getConfig = () =>
   new Promise(resolve =>
-    navigator.userAgentData
-      .getHighEntropyValues(['platform', 'uaFullVersion'])
-      .then(({ platform, uaFullVersion }) => {
-        chrome.management.getAll(extensions =>
-          chrome.storage.local.get(store => {
-            if (!store.arch) {
-              store.arch = platform.includes('Macintosh')
-                ? 'mac'
-                : platform.includes('Win64')
-                ? 'win64'
-                : undefined
-            }
-            getSelf().then(self =>
-              resolve({
-                ...store,
-                currentVersion: uaFullVersion,
-                extensions,
-                self
-              })
-            )
-          })
-        )
-      })
+    getUserAgentData().then(({ platform, uaFullVersion }) => {
+      chrome.management.getAll(extensions =>
+        chrome.storage.local.get(store => {
+          if (!store.arch) {
+            store.arch = platform.includes('Macintosh')
+              ? 'mac'
+              : platform.includes('Win64')
+              ? 'win64'
+              : undefined
+          }
+          getSelf().then(self =>
+            resolve({
+              ...store,
+              currentVersion: uaFullVersion,
+              extensions,
+              self
+            })
+          )
+        })
+      )
+    })
   )
 
 export const getExtensionsInfo = async currentVersion => {

@@ -2,6 +2,7 @@ import {
   clearError,
   getConfig,
   getExtensionsInfo,
+  getUserAgentData,
   trackError
 } from './utils.js'
 
@@ -59,9 +60,7 @@ const main = async (...args) => {
       })
   ]
 
-  const { uaFullVersion } = await navigator.userAgentData.getHighEntropyValues([
-    'uaFullVersion'
-  ])
+  const { uaFullVersion } = await getUserAgentData()
 
   if (extensionsTrack) {
     p.push(getExtensionsInfo(uaFullVersion))
@@ -128,9 +127,7 @@ chrome.storage.onChanged.addListener(async () => {
       extensions.find(({ version }) => version === e.version)
     )
 
-  const { uaFullVersion } = await navigator.userAgentData.getHighEntropyValues([
-    'uaFullVersion'
-  ])
+  const { uaFullVersion } = await getUserAgentData()
 
   chrome.browserAction.setBadgeText({
     text:
