@@ -15,10 +15,6 @@ window.onunhandledrejection = e => {
   return false
 }
 
-const currentVersion = navigator.userAgent.match(
-  /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-)[1]
-
 const main = async (...args) => {
   const config = await getConfig()
   const now = new Date()
@@ -63,8 +59,12 @@ const main = async (...args) => {
       })
   ]
 
+  const { uaFullVersion } = await navigator.userAgentData.getHighEntropyValues([
+    'uaFullVersion'
+  ])
+
   if (extensionsTrack) {
-    p.push(getExtensionsInfo(currentVersion))
+    p.push(getExtensionsInfo(uaFullVersion))
   }
 
   Promise.all(p).then(([versions, extensionsInfo]) => {
@@ -122,15 +122,19 @@ chrome.storage.onChanged.addListener(async () => {
     versions[arch].find(v => v.tag === tag)
 
   const extensionsNew =
-    extensions.length > 0 &&
+    extensions?.length > 0 &&
     extensionsInfo &&
     !extensionsInfo.every(e =>
       extensions.find(({ version }) => version === e.version)
     )
 
+  const { uaFullVersion } = await navigator.userAgentData.getHighEntropyValues([
+    'uaFullVersion'
+  ])
+
   chrome.browserAction.setBadgeText({
     text:
-      (current && currentVersion !== current.version) || extensionsNew
+      (current && uaFullVersion !== current.version) || extensionsNew
         ? 'New'
         : ''
   })

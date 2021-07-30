@@ -17,9 +17,6 @@ window.onunhandledrejection = e => {
   return false
 }
 
-const currentVersion = window.navigator.userAgent.match(
-  /Chrome\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-)[1]
 const html = htm.bind(h)
 
 /*
@@ -32,7 +29,9 @@ const changeBoolSetting = ({ target: { checked, name } }) => {
   }
 
   if (name === 'extensionsTrack' && checked) {
-    getExtensionsInfo(currentVersion)
+    navigator.userAgentData
+      .getHighEntropyValues(['uaFullVersion'])
+      .then(({ uaFullVersion }) => getExtensionsInfo(uaFullVersion))
       .then(extensionsInfo => {
         newState.extensionsInfo = extensionsInfo
       })
@@ -58,7 +57,7 @@ const removeExt = e => chrome.management.uninstall(e.target.id)
  * Components
  */
 
-const ChromiumInfo = ({ arch, current = {}, tag }) => html`
+const ChromiumInfo = ({ arch, current = {}, currentVersion, tag }) => html`
   <details open="${current.version !== currentVersion}">
     <summary>Chromium <code>v${currentVersion}</code></summary>
     <ul>
@@ -95,6 +94,7 @@ const ChromiumInfo = ({ arch, current = {}, tag }) => html`
 `
 
 const ExtensionsInfo = ({
+  currentVersion,
   extensions = [],
   extensionsInfo = [],
   onDisableExtension
@@ -382,6 +382,7 @@ class App extends Component {
     props,
     {
       arch,
+      currentVersion,
       error,
       errorTracking,
       extensions,
@@ -404,13 +405,19 @@ class App extends Component {
         tag &&
         html`
           <${Section}>
-            <${ChromiumInfo} arch="${arch}" current="${current}" tag="${tag}" />
+            <${ChromiumInfo}
+              arch="${arch}"
+              current="${current}"
+              currentVersion="${currentVersion}"
+              tag="${tag}"
+            />
           <//>
         `}
       ${extensionsTrack &&
         html`
           <${Section}>
             <${ExtensionsInfo}
+              currentVersion="${currentVersion}"
               extensions="${extensions}"
               extensionsInfo="${extensionsInfo}"
               onDisableExtension="${this.onDisableExtension}"

@@ -107,20 +107,29 @@ const fetchExtensionsInfo = async (extensions, prodversion) => {
 
 export const getConfig = () =>
   new Promise(resolve =>
-    chrome.management.getAll(extensions =>
-      chrome.storage.local.get(store => {
-        if (!store.arch) {
-          store.arch = navigator.userAgent.includes('Macintosh')
-            ? 'mac'
-            : navigator.userAgent.includes('Win64')
-            ? 'win64'
-            : navigator.userAgent.includes('Windows')
-            ? 'win32'
-            : undefined
-        }
-        getSelf().then(self => resolve({ ...store, self, extensions }))
+    navigator.userAgentData
+      .getHighEntropyValues(['platform', 'uaFullVersion'])
+      .then(({ platform, uaFullVersion }) => {
+        chrome.management.getAll(extensions =>
+          chrome.storage.local.get(store => {
+            if (!store.arch) {
+              store.arch = platform.includes('Macintosh')
+                ? 'mac'
+                : platform.includes('Win64')
+                ? 'win64'
+                : undefined
+            }
+            getSelf().then(self =>
+              resolve({
+                ...store,
+                currentVersion: uaFullVersion,
+                extensions,
+                self
+              })
+            )
+          })
+        )
       })
-    )
   )
 
 export const getExtensionsInfo = async currentVersion => {
@@ -153,14 +162,17 @@ export const trackError = async e => {
     })
 
     if (errorTracking || errorTracking === undefined) {
-      fetch('https://chrome-extension-service-kkkrist.vercel.app/api/errorlogs', {
-        method: 'POST',
-        body: JSON.stringify({
-          error: message,
-          pluginVersion: self && self.version
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      })
+      fetch(
+        'https://chrome-extension-service-kkkrist.vercel.app/api/errorlogs',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            error: message,
+            pluginVersion: self && self.version
+          }),
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
   } catch (error) {
     console.error(`Error while error tracking, d'oh!`, error)
