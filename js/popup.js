@@ -101,7 +101,10 @@ const ExtensionsInfo = ({
 }) => {
   const supported = extensions
     .filter(ext =>
-      extensionsInfo.find(({ id, version }) => id === ext.id && version)
+      extensionsInfo.find(
+        ({ id, updateUrl, version }) =>
+          (id === ext.id || updateUrl === ext.updateUrl) && version
+      )
     )
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -118,7 +121,9 @@ const ExtensionsInfo = ({
       <summary>${extensions.length} Extensions</summary>
       <ul class="extensions">
         ${supported.map(ext => {
-          const info = extensionsInfo.find(({ id }) => id === ext.id)
+          const info = extensionsInfo.find(
+            ({ id, updateUrl }) => id === ext.id || updateUrl === ext.updateUrl
+          )
           return html`
             <li>
               <div class="${ext.enabled ? '' : ' disabled'}">
