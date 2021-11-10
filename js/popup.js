@@ -5,6 +5,7 @@ import {
   getConfig,
   getExtensionsInfo,
   getUserAgentData,
+  matchExtension,
   trackError
 } from './utils.js'
 
@@ -100,12 +101,7 @@ const ExtensionsInfo = ({
   onDisableExtension
 }) => {
   const supported = extensions
-    .filter(ext =>
-      extensionsInfo.find(
-        ({ id, updateUrl, version }) =>
-          (id === ext.id || updateUrl === ext.updateUrl) && version
-      )
-    )
+    .filter(ext => extensionsInfo.find(matchExtension(ext)))
     .sort((a, b) => a.name.localeCompare(b.name))
 
   const unsupported = extensions
@@ -121,9 +117,7 @@ const ExtensionsInfo = ({
       <summary>${extensions.length} Extensions</summary>
       <ul class="extensions">
         ${supported.map(ext => {
-          const info = extensionsInfo.find(
-            ({ id, updateUrl }) => id === ext.id || updateUrl === ext.updateUrl
-          )
+          const info = extensionsInfo.find(matchExtension(ext))
           return html`
             <li>
               <div class="${ext.enabled ? '' : ' disabled'}">
