@@ -170,6 +170,23 @@ export const getExtensionsInfo = async currentVersion => {
   return await fetchExtensionsInfo(extensions, currentVersion)
 }
 
+export const matchExtension = ext => ({ id, updateUrl, version }) => {
+  if (!version) {
+    return false
+  }
+
+  if (id === ext.id) {
+    return true
+  }
+
+  if (
+    updateUrl !== 'https://clients2.google.com/service/update2/crx' &&
+    updateUrl === ext.updateUrl
+  ) {
+    return true
+  }
+}
+
 export const trackError = async e => {
   console.error(e.reason || e.error || e)
   const message =
