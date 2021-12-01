@@ -207,8 +207,7 @@ export const trackError = async e => {
           method: 'POST',
           body: JSON.stringify({
             error: message,
-            pluginVersion: self && self.version,
-            stack: e.stack
+            pluginVersion: self && self.version
           }),
           headers: { 'Content-Type': 'application/json' }
         }
