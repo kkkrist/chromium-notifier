@@ -189,8 +189,7 @@ export const matchExtension = ext => ({ id, updateUrl, version }) => {
 
 export const trackError = async e => {
   console.error(e.reason || e.error || e)
-  const message =
-    (e.reason && e.reason.toString()) || e.stack || e.message || 'Unknown'
+  const message = e.reason?.stack || e.stack || e.message || 'Unknown'
 
   try {
     const self = await getSelf()
