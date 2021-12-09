@@ -123,9 +123,9 @@ chrome.storage.onChanged.addListener(async () => {
   const extensionsNew =
     extensions?.length > 0 &&
     extensionsInfo &&
-    !extensionsInfo.every(e =>
-      extensions.find(({ version }) => version === e.version)
-    )
+    !extensionsInfo
+      .filter(e => e)
+      .every(e => extensions.find(({ version }) => version === e.version))
 
   const { uaFullVersion } = await getUserAgentData()
 
