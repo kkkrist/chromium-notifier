@@ -2,9 +2,9 @@
 
 This project is going to be archived in March 2023. It's been a fun one and I'm happy to have given something back to the Chromium community. The project has been on cruise-control for quite some time anyway, mostly because I've stopped using it myself. To keep it working beyond the coming months it's going to need some updates which I simply lack the time (and motivation to make time) for. Parts of the functionality need to be re-written to work in a service worker context for manifest v3. The [privacy proxy](https://github.com/kkkrist/chromium-extension-service) needs updating to adapt to backend changes. On top of that, it's running at its capacity limits since months and I don't feel like paying for higher service tiers (it runs on Vercel/MongoDB Atlas). It doesn't help that some forks of the extension have their users hammer on the error logger either.
 
-There's going to be one last update in the form of v2.0.0. It will have the option to use the privacy proxy removed, which I'm going to shut down. Apart from that, the functionality will be identical to the latest v1 (v1.8.9). So if you want to track updates for your installed extensions (which is optional), you're going to have to let it communicate with Google's servers directly (with all privacy implications).
+There's going to be one last update in the form of v2.0.0. It will have the option to use the privacy proxy removed, which I'm going to shut down (also includes the error logger). Apart from that, the functionality will be identical to the latest v1 (v1.8.9). So if you want to track updates for your installed extensions (which is optional), you're going to have to let it communicate with Google's servers directly (with all privacy implications).
 
-v2.0.0 (or v1.8.9 with the privacy proxy disabled) should keep working for as long as the Woolyss API and the Chrome Web Store API do not introduce breaking changes and your preferred Chromium build supports installing manifest v3 extensions (in some way).
+v2.0.0 (or v1.8.9 with the privacy proxy disabled) should keep working for as long as the Woolyss API and the Chrome Web Store API do not introduce breaking changes and your preferred Chromium build supports installing manifest v2 extensions (in some way).
 
 # Chromium Update Notifications
 
