@@ -238,7 +238,6 @@ const Settings = ({
   errorTracking,
   extensionsTrack,
   tag,
-  useProxy,
   versions
 }) => html`
   <details open="${!arch || !tag}">
@@ -288,24 +287,6 @@ const Settings = ({
             type="checkbox"
           />
           Track extension updates
-        </label>
-
-        <br />
-
-        <label class="${!extensionsTrack ? 'disabled' : ''}">
-          <input
-            checked="${useProxy || useProxy === undefined}"
-            disabled="${!extensionsTrack}"
-            name="useProxy"
-            onChange="${changeBoolSetting}"
-            style="margin: 0 0.25rem 0 0"
-            type="checkbox"
-          />
-          Increase privacy (<a
-            href="https://github.com/kkkrist/chromium-extension-service/#version-info-for-installed-extensions"
-            target="_blank"
-            >more info</a
-          >)
         </label>
       </p>
 
@@ -379,7 +360,6 @@ class App extends Component {
       self,
       tag,
       timestamp,
-      useProxy,
       versions
     }
   ) {
@@ -419,7 +399,6 @@ class App extends Component {
           errorTracking="${errorTracking}"
           extensionsTrack="${extensionsTrack}"
           tag="${tag}"
-          useProxy="${useProxy}"
           versions="${versions}"
         />
       <//>

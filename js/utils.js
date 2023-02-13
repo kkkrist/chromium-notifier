@@ -51,58 +51,25 @@ const fetchExtensionInfo = async (updateUrl, ids, prodversion) => {
 }
 
 const fetchExtensionsInfo = async (extensions, prodversion) => {
-  const { useProxy } = await getConfig()
-  const self = await getSelf()
-
-  if (useProxy || useProxy === undefined) {
-    const res = await fetch(
-      `https://chrome-extension-service-kkkrist.vercel.app/api?pluginVersion=${self &&
-        self.version}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prodversion,
-          extensions
-        })
-      }
-    )
-
-    const text = await res.text()
-
-    try {
-      const json = JSON.parse(text)
-      return json
-    } catch (error) {
-      throw new Error(
-        `${error.message} (proxy API): ${
-          text.length > 60
-            ? text.slice(0, 30) + '…' + text.slice(text.length - 30)
-            : text
-        }`
-      )
+  const jobs = extensions.reduce((acc, { id, updateUrl }) => {
+    if (updateUrl) {
+      acc[updateUrl] = addIfNew(acc[updateUrl], id)
     }
-  } else {
-    const jobs = extensions.reduce((acc, { id, updateUrl }) => {
-      if (updateUrl) {
-        acc[updateUrl] = addIfNew(acc[updateUrl], id)
-      }
-      return acc
-    }, {})
+    return acc
+  }, {})
 
-    const results = await Promise.allSettled(
-      Object.keys(jobs).map(
-        updateUrl =>
-          updateUrl &&
-          fetchExtensionInfo(updateUrl, jobs[updateUrl], prodversion)
-      )
+  const results = await Promise.allSettled(
+    Object.keys(jobs).map(
+      updateUrl =>
+      updateUrl &&
+      fetchExtensionInfo(updateUrl, jobs[updateUrl], prodversion)
     )
+  )
 
-    return results
-      .filter(({ status }) => status === 'fulfilled')
-      .map(({ value }) => value)
-      .flat()
-  }
+  return results
+    .filter(({ status }) => status === 'fulfilled')
+    .map(({ value }) => value)
+    .flat()
 }
 
 export const getUserAgentData = async () => {
