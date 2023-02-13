@@ -6,18 +6,7 @@ import {
   getExtensionsInfo,
   getUserAgentData,
   matchExtension,
-  trackError
 } from './utils.js'
-
-window.onerror = e => {
-  trackError(e)
-  return false
-}
-
-window.onunhandledrejection = e => {
-  trackError(e)
-  return false
-}
 
 const html = htm.bind(h)
 

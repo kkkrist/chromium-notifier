@@ -3,18 +3,7 @@ import {
   getConfig,
   getExtensionsInfo,
   getUserAgentData,
-  trackError
 } from './utils.js'
-
-window.onerror = e => {
-  trackError(e)
-  return false
-}
-
-window.onunhandledrejection = e => {
-  trackError(e)
-  return false
-}
 
 const main = async (...args) => {
   const config = await getConfig()

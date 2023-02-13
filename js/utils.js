@@ -186,33 +186,3 @@ export const matchExtension = ext => ({ id, updateUrl, version }) => {
     return true
   }
 }
-
-export const trackError = async e => {
-  console.error(e.reason || e.error || e)
-  const message = e.reason?.stack || e.stack || e.message || 'Unknown'
-
-  try {
-    const self = await getSelf()
-    const { errorTracking } = await getConfig()
-
-    chrome.storage.local.set({
-      error: message
-    })
-
-    if (errorTracking || errorTracking === undefined) {
-      fetch(
-        'https://chrome-extension-service-kkkrist.vercel.app/api/errorlogs',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            error: message,
-            pluginVersion: self && self.version
-          }),
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-  } catch (error) {
-    console.error(`Error while error tracking, d'oh!`, error)
-  }
-}
